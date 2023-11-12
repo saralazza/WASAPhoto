@@ -49,20 +49,28 @@ paths:
         content:
           application/json:
             schema: 
+              description: User username
               type: object
               properties:
                 name:
-                  {$ref: '#/components/schemas/User/properties/username'}
-        required: true
+                  description: User username
+                  type: string
+                  example: Maria
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
       responses:
         '201':
           description: User log-in action successful
           content:
             application/json:
               schema:
+                description: User identifier
                 type: object
+                example: 1
                 properties:
                   identifier:
+                    description: The user numeric indentifier
                     type: integer
                     example: 1
   
@@ -83,7 +91,7 @@ paths:
           content: 
             application/json:
               schema: 
-                {$ref: "#/components/schemas/User"}
+                {$ref: "#/components/schemas/Ban"}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
@@ -96,13 +104,13 @@ paths:
       description: Unban an user
       operationId: unbanUser
       responses:
-        "200":
+        "204":
           description: User unbanned successfully
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
     
-  /user/{uid}/ban/:
+  /user/{uid}/ban:
     parameters:
       - {$ref: "#/components/parameters/uid"}
     get:
@@ -140,7 +148,7 @@ paths:
           content: 
             application/json:
               schema: 
-                {$ref: "#/components/schemas/User"}
+                {$ref: "#/components/schemas/Follow"}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
@@ -153,13 +161,13 @@ paths:
       description: Unfollow an user
       operationId: unfollowUser
       responses:
-        "200":
+        "204":
           description: User unfollowed successfully
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
   
-  /user/{uid}/follow/:
+  /user/{uid}/follow:
     parameters:
       - {$ref: "#/components/parameters/uid"}
     get:
@@ -180,28 +188,7 @@ paths:
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
   
-  /user/{uid}/followed/:
-    parameters:
-      - {$ref: "#/components/parameters/uid"}
-    get:
-      security:
-      - bearerAuth: []
-      tags: ["follow"]
-      summary: Obtain following list
-      description: Obtain fthe list of following users
-      operationId: getFollowedList
-      responses:
-        "200":
-          description: Following list returned successfully
-          content:
-            apllication/json:
-              schema:
-                {$ref: '#/components/schemas/FollowList'}
-        "400": {$ref: '#/components/responses/BadRequest'}
-        "401": {$ref: '#/components/responses/Unauthorized'}
-        "500": {$ref: '#/components/responses/InternalServerError'}
-  
-  /user/{uid}/myUsername:
+  /user/{uid}/myusername:
     parameters:
       - {$ref: "#/components/parameters/uid"}
     put:
@@ -243,11 +230,15 @@ paths:
       responses:
         "200":
           description: Photo deleted successfully
+          content:
+            application/json:
+              schema:
+                {$ref: '#/components/schemas/Photo'}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
         
-  /user/{uid}/photo/:
+  /user/{uid}/photo:
     parameters:
       - {$ref: "#/components/parameters/uid"}
     post:
@@ -262,6 +253,7 @@ paths:
           application/json:
             schema: 
               {$ref: '#/components/schemas/Photo'}
+        required: true
       responses:
         "201":
           description: Photo uploaded successfully
@@ -299,12 +291,16 @@ paths:
       security:
       - bearerAuth: []
       description: Add like to a photo
-      summary: Like photo #TODO
+      summary: Like photo
       tags: ["like"]
       operationId: likePhoto
       responses:
         "200":
           description: Photo liked successfully
+          content:
+            application/json:
+              schema:
+                {$ref: '#/components/schemas/Like'}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
@@ -312,12 +308,12 @@ paths:
     delete: 
       security:
       - bearerAuth: []
-      description: Delete like from a photo #TODO
-      summary: Unlike photo #TODO
+      description: Delete like from a photo 
+      summary: Unlike photo 
       tags: ["like"]
       operationId: unlikePhoto
       responses:
-        "200":
+        "204":
           description: Photo unliked successfully
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
@@ -362,19 +358,23 @@ paths:
       responses:
         "200":
           description: Comment deleted successfully
+          content:
+            apllication/json:
+              schema:
+                {$ref: '#/components/schemas/Comment'}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
     
-  /user/{uid}/photo/{photoid}/comments/:
+  /user/{uid}/photo/{photoid}/comments:
     parameters:
       - {$ref: "#/components/parameters/uid"}
       - {$ref: "#/components/parameters/photoid"}
     post:
       security:
       - bearerAuth: []
-      description: Add a comment to a photo #TODO
-      summary: Comment photo #TODO
+      description: Add a comment to a photo
+      summary: Comment photo
       tags: ["comment"]
       operationId: commentPhoto
       requestBody:
@@ -382,9 +382,14 @@ paths:
           application/json:
             schema: 
               {$ref: '#/components/schemas/Comment'}
+        required: true
       responses:
-        "200":
+        "201":
           description: Comment added successfully
+          content:
+            application/json:
+              schema: 
+                { $ref: '#/components/schemas/Comment'}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
@@ -463,13 +468,6 @@ components:
     InternalServerError:
       description: The server encountered an unexpected error
   parameters:
-    username:
-      name: username
-      description: Username of the user
-      schema:
-        {$ref: '#/components/schemas/User/properties/username'}
-      in: path
-      required: true
     uid:
       name: uid
       description: Id of the user
@@ -531,6 +529,38 @@ components:
           pattern: 'ˆ.*?$'
           minLength: 3
           maxLength: 16
+
+    Like:
+      title: Like
+      description: Like schema composed by the id of the photo, the id of the user that likes photo and the id of the photo owner
+      type: object
+      properties:
+        photoid: 
+          {$ref: '#/components/schemas/Photo/properties/id'}
+        userid:
+          {$ref: '#/components/schemas/User/properties/id'}
+        ownerid:
+          {$ref: '#/components/schemas/User/properties/id'}
+    
+    Ban:
+      title: Ban
+      description: the id of the banned user and the id of the user that bans the other one
+      type: object
+      properties:
+        userid:
+          {$ref: '#/components/schemas/User/properties/id'}
+        benneduserid:
+          {$ref: '#/components/schemas/User/properties/id'}
+
+    Follow:
+      title: Follow
+      description: the id of the followed user and the id of the user that follows the other one
+      type: object
+      properties:
+        userid:
+          {$ref: '#/components/schemas/User/properties/id'}
+        followeduserid:
+          {$ref: '#/components/schemas/User/properties/id'}
     
     Photo:
       title: Photo
@@ -545,22 +575,27 @@ components:
           description: Photo url
           type: string
           example: "http://photo/wasa.com"
+          maxLength: 100
+          minLength: 0
+          pattern: 'ˆ.*?$'
         date:
           description: Upload date
           type: string
           format: date-time
           example: "2023-11-21T00:28:28Z"
-        likeCounter:
+          maxLength: 20
+          minLength: 0
+        likecounter:
           description: Like number
           type: integer
           minimum: 0
           example: 2
-        commentCounter:
+        commentcounter:
           description: Comment number
           type: integer
           minimum: 0
           example: 2
-        uid:
+        userid:
           description: User identifier
           type: integer
           example: 1
@@ -573,20 +608,29 @@ components:
           description: Comment text
           type: string
           example: "very good"
+          pattern: 'ˆ.*?$'
+          minLength: 0
+          maxLength: 500
         id:
           description: Comment id
           type: integer
           minimum: 0
           example: 1
-        uid:
+        userid:
           {$ref: '#/components/schemas/User/properties/id'}
           
     Stream:
       title: Stream
       description: Stream schema composed by the photos of following users
-      type: array
-      items:
-        {$ref: '#/components/schemas/Photo'}
+      type: object
+      properties:
+        photos:
+          description: The list oh photos
+          type: array
+          items:
+            {$ref: '#/components/schemas/Photo'}
+          minItems: 0
+          maxItems: 1000
         
     Profile:
       title: Profile
@@ -594,76 +638,90 @@ components:
       type: object
       properties:
         photos:
+          description: The list of photos
           type: array
           items:
             {$ref: '#/components/schemas/Photo'}
+          minItems: 0
+          maxItems: 1000
         username:
           {$ref: '#/components/schemas/User/properties/id'}
-        photoCounter:
+        photocounter:
+          description: The number of photos
           type: integer
           minimum: 0
           example: 10
-        followingCounter:
+        followingcounter:
+          description: The number of followings
           type: integer
           minimum: 0
           example: 100
-        followerCounter:
+        followercounter:
+          description: The number of followers
           type: integer
           minimum: 0
           example: 50
-        followers:
-          type: array
-          items:
-            {$ref: '#/components/schemas/User/properties/username'}
-        followings:
-          type: array
-          items:
-            {$ref: '#/components/schemas/User/properties/username'}
     
     BanList:
       title: BanList
       description: Ban list schema  omposed by username of banned users
       properties:
-        list:
+        ban:
           type: array
+          description: The list of banned people
           items:
-            {$ref: '#/components/schemas/User/properties/username'}
+            {$ref: '#/components/schemas/Ban'}
+          minItems: 0
+          maxItems: 1000
             
             
     FollowList:
       title: FollowList
       description: Follow list schema composed by username of followed users
       properties:
-        list:
+        follow:
           type: array
+          description: The list of followed people
           items:
-            {$ref: '#/components/schemas/User/properties/username'}
+            {$ref: '#/components/schemas/Follow'}
+          minItems: 0
+          maxItems: 1000
             
     PhotoList:
       title: PhotoList
       description: Photo list schema composed by photos
       properties:
-        list:
+        photo:
           type: array
+          description: The list of photos
           items:
             {$ref: '#/components/schemas/Photo'}
+          minItems: 0
+          maxItems: 1000
           
     LikeList:
       title: LikeList
       description: Like list schema composed by username of users that like photo
       properties:
-        list:
+        likes:
+          description: The list of likes
           type: array
           items:
-            {$ref: '#/components/schemas/User/properties/username'}
+            {$ref: '#/components/schemas/Like'}
+          minItems: 0
+          maxItems: 1000
+
     
     CommentList:
       title: CommentList
       description: Comment list schema composed by comments of a photo
       properties:
-        list:
+        comments:
+          description: The list of comments
           type: array
           items:
             {$ref: '#/components/schemas/Comment'}
+          minItems: 0
+          maxItems: 1000
             
       
