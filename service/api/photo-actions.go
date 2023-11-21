@@ -15,7 +15,35 @@ import (
 
 // Delete a photo
 func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var photo Photo
+	var uid uint64
+	var photoid uint64
+	var err error
 
+	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	photoid, err = strconv.ParseUint(ps.ByName("photoid"), 10, 64)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	photo.Id = photoid
+	photo.UserId = uid
+	
+	var dbphoto database.Photo 
+	dbphoto = photo.PhotoFromApiToDatabase()
+	err = rt.db.RemovePhoto(dbphoto)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // Upload a photo

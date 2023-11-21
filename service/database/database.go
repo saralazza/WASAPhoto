@@ -50,6 +50,7 @@ type AppDatabase interface {
 
 	SetPhoto(Photo) error
 	CheckPhotoId(uint64) (bool, error)
+	RemovePhoto(Photo) error
 
 	Ping() error
 }

@@ -15,7 +15,7 @@ func (db *appdbimpl) RemoveLike(l Like) error{
 		return err
 	}
 
-	// Check if the follow exists really
+	// Check if the like exists really
 	check, err := ris.RowsAffected()
 	if err != nil{
 		return err
