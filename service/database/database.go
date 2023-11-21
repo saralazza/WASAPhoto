@@ -46,6 +46,7 @@ type AppDatabase interface {
 	RemoveFollow(Follow) error
 
 	SetLike(Like) error
+	RemoveLike(Like) error
 
 	Ping() error
 }
