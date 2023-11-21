@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"github.com/julienschmidt/httprouter"
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 )
 
 // If the user does not exist, it will be created, and an identifier is returned.

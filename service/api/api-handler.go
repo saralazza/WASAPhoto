@@ -13,7 +13,7 @@ func (rt *_router) Handler() http.Handler {
 	// Ban actions
 	rt.router.PUT("/user/:uid/ban/:banneduid",rt.wrap(rt.banUser))
 	rt.router.DELETE("/user/:uid/ban/:banneduid",rt.wrap(rt.unbanUser))
-	rt.router.GET("/user/:uid/ban",rt.getBanList)
+	rt.router.GET("/user/:uid/ban",rt.wrap(rt.getBanList))
 
 	// Follow actions
 	rt.router.PUT("/user/:uid/follow/:followeduid",rt.wrap(rt.followUser))
@@ -33,7 +33,7 @@ func (rt *_router) Handler() http.Handler {
 	// Like actions
 	rt.router.PUT("/user/:uid/photo/:photoid/likes/:likeuid",rt.wrap(rt.likePhoto))
 	rt.router.DELETE("/user/:uid/photo/:photoid/likes/:likeuid",rt.wrap(rt.unlikePhoto))
-	rt.router.GET("/user/:uid/photo/:photoid/likes",rt.getLikes)
+	rt.router.GET("/user/:uid/photo/:photoid/likes",rt.wrap(rt.getLikes))
 
 	// Comment actions
 	rt.router.DELETE("/user/:uid/photo/:photoid/comments/:commentid",rt.wrap(rt.uncommentPhoto))

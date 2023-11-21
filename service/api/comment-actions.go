@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"github.com/julienschmidt/httprouter"
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 )
 
 // Delete comment from a photo
