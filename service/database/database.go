@@ -48,6 +48,9 @@ type AppDatabase interface {
 	SetLike(Like) error
 	RemoveLike(Like) error
 
+	SetPhoto(Photo) error
+	CheckPhotoId(uint64) (bool, error)
+
 	Ping() error
 }
 
