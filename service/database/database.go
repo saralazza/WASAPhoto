@@ -43,6 +43,7 @@ type AppDatabase interface {
 	SetName(name string) error
 
 	SetFollow(Follow) error
+	RemoveFollow(Follow) error
 
 	Ping() error
 }
@@ -61,7 +62,9 @@ func New(db *sql.DB) (AppDatabase, error) {
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	var err error
 
-	sqlStmt := `CREATE TABLE IF NOT EXISTS User (id INTEGER NOT NULL PRIMARY KEY, username TEXT  NOT NULL UNIQUE);`
+	sqlStmt := `CREATE TABLE IF NOT EXISTS User (id INTEGER NOT NULL PRIMARY KEY, 
+		username TEXT  NOT NULL UNIQUE
+		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return nil, fmt.Errorf("error creating database structure: %w", err)
@@ -97,10 +100,10 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 
 	sqlStmt = `CREATE TABLE IF NOT EXISTS Follow (userid INTEGER NOT NULL, followeduserid TEXT  NOT NULL, 
-	PRIMARY KEY (followeduserid, userid),
-	FOREIGN KEY (userid) REFERENCES User(id),
-	FOREIGN KEY (followeduserid) REFERENCES User(id)
-	);`
+		PRIMARY KEY (followeduserid, userid),
+		FOREIGN KEY (userid) REFERENCES User(id),
+		FOREIGN KEY (followeduserid) REFERENCES User(id)
+		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return nil, fmt.Errorf("error creating database structure: %w", err)

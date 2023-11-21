@@ -47,6 +47,33 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 
 // Unfollow an user
 func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var follow Follow
+	var uid uint64
+	var followeuid uint64
+	var err error
+
+	uid, err= strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	followeuid, err = strconv.ParseUint(ps.ByName("followeduid"), 10, 64)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	follow.UserId = uid
+	follow.FollowedUserId = followeuid
+
+	var dbFollow database.Follow 
+	dbFollow = follow.FollowFromApiToDatabase()
+	err = rt.db.RemoveFollow(dbFollow)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 }
 
