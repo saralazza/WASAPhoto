@@ -75,9 +75,12 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
+	w.WriteHeader(http.StatusNoContent)
+
 }
 
 // Obtain the list of followed users
 func (rt *_router) getFollowList(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
+	// TODO: come prendere lista?
 }
