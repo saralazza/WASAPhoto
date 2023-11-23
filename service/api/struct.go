@@ -138,6 +138,7 @@ type Comment struct{
 	Text string `json:"text"`
 	Id uint64 `json:"id"`
 	UserId uint64 `json:"userId"`
+	PhotoId uint64 `json:"photoId"`
 }
 
 func CommentFromDatabaseToApi(comment database.Comment) Comment{
@@ -145,6 +146,7 @@ func CommentFromDatabaseToApi(comment database.Comment) Comment{
 		Text: comment.Text,
 		Id: comment.Id,
 		UserId: comment.UserId,
+		PhotoId: comment.PhotoId,
 	}
 	
 	return c
@@ -155,6 +157,7 @@ func (c *Comment) CommentFromApiToDatabase() database.Comment{
 		Text: c.Text,
 		Id: c.Id,
 		UserId: c.UserId,
+		PhotoId: c.PhotoId,
 	}
 
 	return comment

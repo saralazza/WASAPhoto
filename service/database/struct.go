@@ -34,4 +34,5 @@ type Comment struct{
 	Text string `json:"text"`
 	Id uint64 `json:"id"`
 	UserId uint64 `json:"userId"`
+	PhotoId uint64 `json:"photoId"`
 }

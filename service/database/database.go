@@ -55,6 +55,8 @@ type AppDatabase interface {
 	SetUser(User) error
 	CheckUserId(uint64) (bool, error)
 
+	RemoveComment(Comment) error
+
 	Ping() error
 }
 

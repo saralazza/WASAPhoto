@@ -227,12 +227,8 @@ paths:
       tags: ["photo"]
       operationId: deletePhoto
       responses:
-        "200":
+        "204":
           description: Photo deleted successfully
-          content:
-            application/json:
-              schema:
-                {$ref: '#/components/schemas/Photo'}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
@@ -355,12 +351,8 @@ paths:
       tags: ["comment"]
       operationId: uncommentPhoto
       responses:
-        "200":
+        "204":
           description: Comment deleted successfully
-          content:
-            apllication/json:
-              schema:
-                {$ref: '#/components/schemas/Comment'}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
