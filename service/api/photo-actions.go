@@ -62,7 +62,11 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	url = ps.ByName("url")
+	err = json.NewDecoder(r.Body).Decode(&url)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	photoid = uint64(rand.Uint64())
 	checkphotoid, err := rt.db.CheckPhotoId(photoid)
@@ -95,6 +99,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(photo)
 
 }

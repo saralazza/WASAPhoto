@@ -52,6 +52,9 @@ type AppDatabase interface {
 	CheckPhotoId(uint64) (bool, error)
 	RemovePhoto(Photo) error
 
+	SetUser(User) error
+	CheckUserId(uint64) (bool, error)
+
 	Ping() error
 }
 
