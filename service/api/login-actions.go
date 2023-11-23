@@ -23,7 +23,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	userid = uint64(rand.Uint64())
+	userid = uint64(rand.Int())
 	checkuserid, err := rt.db.CheckUserId(userid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

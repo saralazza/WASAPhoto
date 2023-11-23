@@ -64,7 +64,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	commentid = uint64(rand.Uint64())
+	commentid = uint64(rand.Int())
 	checkcommentid, err := rt.db.CheckCommentId(commentid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

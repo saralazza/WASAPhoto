@@ -5,12 +5,12 @@ import(
 )
 
 func (db *appdbimpl) SetFollow(f Follow) error{
-	_,err:= db.c.Exec(`INSERT INTO Follower (followeduserid, userid) VALUES (?, ?)`, f.FollowedUserId, f.UserId)
+	_,err:= db.c.Exec(`INSERT INTO Follow (followeduserid, userid) VALUES (?, ?)`, f.FollowedUserId, f.UserId)
 	return err
 }
 
 func (db *appdbimpl) RemoveFollow(f Follow) error{
-	ris, err := db.c.Exec(`DELETE FROM Follower WHERE followeduserid=? and userid=?`, f.FollowedUserId, f.UserId)
+	ris, err := db.c.Exec(`DELETE FROM Follow WHERE followeduserid=? and userid=?`, f.FollowedUserId, f.UserId)
 	if err != nil{
 		return err
 	}
