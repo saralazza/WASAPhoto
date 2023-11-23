@@ -2,6 +2,7 @@ package database
 
 import(
 	"errors"
+	"database/sql"
 )
 
 func (db *appdbimpl) RemoveComment(c Comment) error{
@@ -21,13 +22,12 @@ func (db *appdbimpl) RemoveComment(c Comment) error{
 }
 
 func (db *appdbimpl) CheckCommentId(commentid uint64) (bool, error){
-	ris, err:= db.c.Exec(`SELECT * FROM Comment WHERE Id=?`, commentid)
+	err:= db.c.QueryRow(`SELECT Id FROM Comment WHERE Id=?`, commentid).Scan()
 
-	numberrows, err := ris.RowsAffected()
-	if err != nil{
-		return false, err
-	} else if numberrows == 0 {
+	if errors.Is(err, sql.ErrNoRows){
 		return false, nil
+	} else if err != nil{
+		return false, err
 	}
 	return true, nil
 	

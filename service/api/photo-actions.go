@@ -8,7 +8,6 @@ import (
 	"math/rand"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
-	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 	"github.com/julienschmidt/httprouter"
 
 )
@@ -16,11 +15,9 @@ import (
 // Delete a photo
 func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var photo Photo
-	var uid uint64
 	var photoid uint64
-	var err error
 
-	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -35,8 +32,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.Id = photoid
 	photo.UserId = uid
 	
-	var dbphoto database.Photo 
-	dbphoto = photo.PhotoFromApiToDatabase()
+	dbphoto := photo.PhotoFromApiToDatabase()
 	err = rt.db.RemovePhoto(dbphoto)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -52,11 +48,10 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	var uid uint64
 	var url string
 	var photoid uint64
-	var err error
 
 	currentTime := time.Now()
 
-	err = json.NewDecoder(r.Body).Decode(&photo)
+	err := json.NewDecoder(r.Body).Decode(&photo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -69,13 +64,14 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	photoid = uint64(rand.Int())
-	checkphotoid, err := rt.db.CheckPhotoId(photoid)
+	var checkphotoid bool
+	checkphotoid, err = rt.db.CheckPhotoId(photoid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	for checkphotoid {
-		photoid = rand.Uint64()
+		photoid = uint64(rand.Int())
 		checkphotoid, err = rt.db.CheckPhotoId(photoid)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -90,8 +86,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.CommentCounter = 0
 	photo.UserId = uid
 
-	var dbphoto database.Photo
-	dbphoto = photo.PhotoFromApiToDatabase()
+	dbphoto := photo.PhotoFromApiToDatabase()
 	err = rt.db.SetPhoto(dbphoto)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -102,7 +97,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(photo)
+	_=json.NewEncoder(w).Encode(photo)
 
 }
 

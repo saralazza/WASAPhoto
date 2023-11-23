@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/julienschmidt/httprouter"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
-	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 
 	"strconv"
 	"net/http"
@@ -13,11 +12,9 @@ import (
 // Follow an user
 func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var follow Follow
-	var uid uint64
 	var followeuid uint64
-	var err error
 
-	uid, err= strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -32,8 +29,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	follow.UserId = uid
 	follow.FollowedUserId = followeuid
 
-	var dbFollow database.Follow 
-	dbFollow = follow.FollowFromApiToDatabase()
+	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.SetFollow(dbFollow)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -41,7 +37,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	w.Header().Set("content-type", "application/json")
-	json.NewEncoder(w).Encode(follow)
+	_=json.NewEncoder(w).Encode(follow)
 
 }
 
@@ -67,8 +63,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	follow.UserId = uid
 	follow.FollowedUserId = followeuid
 
-	var dbFollow database.Follow 
-	dbFollow = follow.FollowFromApiToDatabase()
+	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.RemoveFollow(dbFollow)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
