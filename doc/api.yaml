@@ -609,6 +609,8 @@ components:
           example: 1
         userid:
           {$ref: '#/components/schemas/User/properties/id'}
+        photoid:
+          {$ref: '#/components/schemas/Photo/properties/id'}
           
     Stream:
       title: Stream

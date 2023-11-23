@@ -56,14 +56,14 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	currentTime := time.Now()
 
-	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
-	if err != nil{
+	err = json.NewDecoder(r.Body).Decode(&photo)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewDecoder(r.Body).Decode(&url)
-	if err != nil {
+	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

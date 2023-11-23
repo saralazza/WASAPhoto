@@ -56,6 +56,8 @@ type AppDatabase interface {
 	CheckUserId(uint64) (bool, error)
 
 	RemoveComment(Comment) error
+	CheckCommentId(uint64) (bool, error)
+	SetComment(Comment) error
 
 	Ping() error
 }
@@ -122,8 +124,9 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 
 	sqlStmt = `CREATE TABLE IF NOT EXISTS Comment (id INTEGER NOT NULL PRIMARY KEY, text TEXT  NOT NULL, 
-		userid INTEGER NOT NULL,
+		userid INTEGER NOT NULL, photoid INTEGER NOT NULL
 		FOREIGN KEY (userid) REFERENCES User(id)
+		FOREIGN KEY (photoid) REFERENCES Photo(id)
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
