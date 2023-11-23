@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 	"encoding/json"
-	"math/rand"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
@@ -57,24 +56,6 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	commentid := uint64(rand.Int())
-	var checkcommentid bool
-	checkcommentid, err = rt.db.CheckCommentId(commentid)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	for checkcommentid {
-		commentid = uint64(rand.Int())
-		checkcommentid, err = rt.db.CheckCommentId(commentid)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	}
-
-	comment.Id = commentid
 	comment.PhotoId = photoid
 
 	dbcomment := comment.CommentFromApiToDatabase()

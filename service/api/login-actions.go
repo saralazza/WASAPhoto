@@ -3,9 +3,6 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"math/rand"
-	"errors"
-	"database/sql"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
@@ -22,33 +19,13 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 
 	user.Id, err = rt.db.CheckUsername(user.Username)
-	if errors.Is(err, sql.ErrNoRows){
-		userid := uint64(rand.Int())
-		var checkuserid bool
-		checkuserid, err = rt.db.CheckUserId(userid)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		for checkuserid {
-			userid = uint64(rand.Int())
-			checkuserid, err = rt.db.CheckUserId(userid)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-		}
-		user.Id = userid
-		
+	if err != nil{
 		dbuser := user.UserFromApiToDatabase()
-		err = rt.db.SetUser(dbuser)
+		user.Id,err = rt.db.SetUser(dbuser)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	} else if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 	
 	w.Header().Set("content-type", "application/json")

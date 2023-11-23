@@ -49,15 +49,12 @@ type AppDatabase interface {
 	RemoveLike(Like) error
 
 	SetPhoto(Photo) error
-	CheckPhotoId(uint64) (bool, error)
 	RemovePhoto(Photo) error
 
-	SetUser(User) error
-	CheckUserId(uint64) (bool, error)
+	SetUser(User) (uint64,error)
 	CheckUsername(string)(uint64,error)
 
 	RemoveComment(Comment) error
-	CheckCommentId(uint64) (bool, error)
 	SetComment(Comment) error
 
 	Ping() error
@@ -77,7 +74,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	var err error
 
-	sqlStmt := `CREATE TABLE IF NOT EXISTS User (id INTEGER NOT NULL PRIMARY KEY, 
+	sqlStmt := `CREATE TABLE IF NOT EXISTS User (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
 		username TEXT  NOT NULL UNIQUE
 		);`
 	_, err = db.Exec(sqlStmt)
@@ -85,7 +82,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
-	sqlStmt = `CREATE TABLE IF NOT EXISTS Photo (id INTEGER NOT NULL PRIMARY KEY, userid TEXT NOT NULL, 
+	sqlStmt = `CREATE TABLE IF NOT EXISTS Photo (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, userid TEXT NOT NULL, 
 		date TEXT NOT NULL, url TEXT NOT NULL,
 		FOREIGN KEY (userid) REFERENCES User(id)
 		);`
@@ -124,7 +121,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
-	sqlStmt = `CREATE TABLE IF NOT EXISTS Comment (id INTEGER NOT NULL PRIMARY KEY, text TEXT  NOT NULL, 
+	sqlStmt = `CREATE TABLE IF NOT EXISTS Comment (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, text TEXT  NOT NULL, 
 		userid INTEGER NOT NULL, photoid INTEGER NOT NULL,
 		FOREIGN KEY (userid) REFERENCES User(id)
 		FOREIGN KEY (photoid) REFERENCES Photo(id)

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	"math/rand"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
@@ -47,7 +46,6 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	var photo Photo
 	var uid uint64
 	var url string
-	var photoid uint64
 
 	currentTime := time.Now()
 
@@ -62,24 +60,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	photoid = uint64(rand.Int())
-	var checkphotoid bool
-	checkphotoid, err = rt.db.CheckPhotoId(photoid)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	for checkphotoid {
-		photoid = uint64(rand.Int())
-		checkphotoid, err = rt.db.CheckPhotoId(photoid)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	}
 	
-	photo.Id = photoid
 	photo.Url = url
 	photo.Date = currentTime.Format("2006-01-02 15:04:05")
 	photo.LikeCounter = 0
