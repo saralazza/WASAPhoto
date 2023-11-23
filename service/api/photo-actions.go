@@ -68,7 +68,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	photoid = uint64(rand.Uint64())
+	photoid = uint64(rand.Int())
 	checkphotoid, err := rt.db.CheckPhotoId(photoid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -82,7 +82,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 			return
 		}
 	}
-
+	
 	photo.Id = photoid
 	photo.Url = url
 	photo.Date = currentTime.Format("2006-01-02 15:04:05")
@@ -97,6 +97,8 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	photo = PhotoFromDatabaseToApi(dbphoto)
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)

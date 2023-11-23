@@ -13,7 +13,7 @@ import (
 // If the user does not exist, it will be created, and an identifier is returned.
 // If the user exists, the user identifier is returned.
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	var user User
+	var user User 
 	var err error
 	var userid uint64
 
@@ -30,7 +30,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 	for checkuserid {
-		userid = rand.Uint64()
+		userid = uint64(rand.Uint64())
 		checkuserid, err = rt.db.CheckUserId(userid)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -38,7 +38,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		}
 	}
 	user.Id = userid
-
+	
 	var dbuser database.User
 	dbuser = user.UserFromApiToDatabase()
 	err = rt.db.SetUser(dbuser)
@@ -46,7 +46,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(user)

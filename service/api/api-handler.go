@@ -37,7 +37,7 @@ func (rt *_router) Handler() http.Handler {
 
 	// Comment actions
 	rt.router.DELETE("/user/:uid/photo/:photoid/comments/:commentid",rt.wrap(rt.uncommentPhoto)) // DONE
-	rt.router.POST("/user/:uid/photo/:photoid/comments",rt.wrap(rt.commentPhoto))
+	rt.router.POST("/user/:uid/photo/:photoid/comments",rt.wrap(rt.commentPhoto)) // DONE
 	rt.router.GET("/user/:uid/photo/:photoid/comments",rt.wrap(rt.getComments))
 
 	// Special routes

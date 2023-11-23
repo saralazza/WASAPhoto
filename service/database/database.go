@@ -124,7 +124,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 
 	sqlStmt = `CREATE TABLE IF NOT EXISTS Comment (id INTEGER NOT NULL PRIMARY KEY, text TEXT  NOT NULL, 
-		userid INTEGER NOT NULL, photoid INTEGER NOT NULL
+		userid INTEGER NOT NULL, photoid INTEGER NOT NULL,
 		FOREIGN KEY (userid) REFERENCES User(id)
 		FOREIGN KEY (photoid) REFERENCES Photo(id)
 		);`

@@ -1,6 +1,7 @@
 package database
 
-import(
+import (
+	"database/sql"
 	"errors"
 )
 
@@ -9,14 +10,13 @@ func (db *appdbimpl) SetPhoto(p Photo) error{
 	return err
 }
 
-func (db *appdbimpl) CheckPhotoId(photoid uint64) (bool, error){
-	ris, err:= db.c.Exec(`SELECT * FROM Photo WHERE Id=?`, photoid)
+func (db *appdbimpl) CheckPhotoId(photoid uint64) (bool,error){
+	err:= db.c.QueryRow(`SELECT Id FROM Photo WHERE Id=?`, photoid).Scan()
 
-	numberrows, err := ris.RowsAffected()
-	if err != nil{
-		return false, err
-	} else if numberrows == 0 {
+	if err == sql.ErrNoRows{
 		return false, nil
+	} else if err != nil{
+		return false, err
 	}
 	return true, nil
 }
