@@ -36,3 +36,27 @@ func (db *appdbimpl) RemovePhoto(p Photo)  error{
 	}
 	return err
 }
+
+func (db *appdbimpl) GetPhotos(userid uint64) ([]Photo,error){
+	var photos []Photo
+
+	rows, err := db.c.Query(`SELECT * FROM Photo WHERE userid=?`,userid)
+	if err != nil {
+		return nil, ErrorUserDoesNotExist
+	}
+
+	for rows.Next(){
+		var photo Photo
+
+		err = rows.Scan(&photo.Id,&photo.UserId,&photo.Date,&photo.Url)
+		if err != nil{
+			return nil, err
+		}
+
+		photos = append(photos, photo)
+	}
+
+	_ = rows.Close()
+
+	return photos, nil
+}

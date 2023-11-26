@@ -53,3 +53,11 @@ type Stream struct{
 	UserId uint64 `json:"userId"`
 	Photos []Photo `json:"photos"`
 }
+
+type Profile struct{
+	Username string `json:"username"`
+	Photos []Photo `json:"photos"`
+	PhotoCounter uint64 `json:"photoCounter"`
+	FollowerCounter uint64 `json:"followerCounter"`
+	FollowingCounter uint64 `json:"followingCounter"`
+}

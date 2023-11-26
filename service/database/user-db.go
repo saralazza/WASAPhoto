@@ -78,3 +78,42 @@ func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error){
 
 	return ris, nil
 }
+
+func (db *appdbimpl) GetUsernameById(userid uint64) (string,error){
+	var username string
+	err := db.c.QueryRow(`SELECT username FROM User WHERE id=?`,userid).Scan(&username)
+	if err != nil{
+		return "", err
+	}else if errors.Is(err,sql.ErrNoRows){
+		return "", ErrorUserDoesNotExist
+	}
+	return username, nil
+}
+
+func (db *appdbimpl) GetProfile(userid uint64) (uint64,uint64,uint64,error){
+	var photoCounter uint64
+	err := db.c.QueryRow(`SELECT COUNT(*) FROM Photo WHERE userid=?`,userid).Scan(&photoCounter)
+	if err != nil{
+		return 0,0,0, err
+	}else if errors.Is(err,sql.ErrNoRows){
+		return 0,0,0, ErrorUserDoesNotExist
+	}
+
+	var followerCounter uint64
+	err = db.c.QueryRow(`SELECT COUNT(*) FROM Follow WHERE followeduserid=?`,userid).Scan(&followerCounter)
+	if err != nil{
+		return 0,0,0, err
+	}else if errors.Is(err,sql.ErrNoRows){
+		return 0,0,0, ErrorUserDoesNotExist
+	}
+
+	var followingCounter uint64
+	err = db.c.QueryRow(`SELECT COUNT(*) FROM Follow WHERE userid=?`,userid).Scan(&followingCounter)
+	if err != nil{
+		return 0,0,0, err
+	}else if errors.Is(err,sql.ErrNoRows){
+		return 0,0,0, ErrorUserDoesNotExist
+	}
+
+	return photoCounter,followerCounter, followingCounter, nil
+}

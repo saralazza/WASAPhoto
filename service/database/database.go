@@ -50,11 +50,14 @@ type AppDatabase interface {
 
 	SetPhoto(Photo) (uint64, error)
 	RemovePhoto(Photo) error
+	GetPhotos(uint64)([]Photo,error)
 
 	SetUser(User) (uint64,error)
 	CheckUsername(string)(uint64,error)
 	SetUsername(User)error
 	GetStream(uint64)([]Photo, error)
+	GetUsernameById(uint64)(string, error)
+	GetProfile(uint64)(uint64,uint64,uint64,error)
 
 	RemoveComment(Comment) error
 	SetComment(Comment) (uint64,error)

@@ -9,6 +9,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"database/sql"
 )
 
 // Set username of the user
@@ -80,5 +81,49 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 
 // Get user profile composed by the user’s photos, how many photos have been uploaded, and the user’s followers and following.
 func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var profile database.Profile
 
+	userid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = CheckAuthentication(r.Header.Get("Authorization"),userid)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	profile.Username, err = rt.db.GetUsernameById(userid)
+	if errors.Is(err,sql.ErrNoRows){
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	profile.Photos, err = rt.db.GetPhotos(userid)
+	if errors.Is(err,database.ErrorUserDoesNotExist){
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	profile.PhotoCounter, profile.FollowerCounter, profile.FollowingCounter, err= rt.db.GetProfile(userid)
+	if errors.Is(err,database.ErrorUserDoesNotExist){
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(profile)
+	
 }
