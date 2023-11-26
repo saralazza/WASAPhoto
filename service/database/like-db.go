@@ -1,12 +1,11 @@
 package database
 
-import(
-	"errors"
-)
-
 func (db *appdbimpl) SetLike(l Like) error{
 	_,err:= db.c.Exec(`INSERT INTO Like (photoid, userid) VALUES (?, ?)`, l.PhotoId, l.UserId)
-	return err
+	if err != nil{
+		return err
+	}
+	return nil
 }
 
 func (db *appdbimpl) RemoveLike(l Like) error{
@@ -20,7 +19,7 @@ func (db *appdbimpl) RemoveLike(l Like) error{
 	if err != nil{
 		return err
 	} else if check == 0 {
-		return errors.New(`Like does not exist`)
+		return ErrorLikeDoesNotExist
 	}
 	return err
 }

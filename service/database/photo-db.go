@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 )
 
 func (db *appdbimpl) SetPhoto(p Photo) (uint64,error){
@@ -36,22 +35,4 @@ func (db *appdbimpl) RemovePhoto(p Photo)  error{
 		return ErrorPhotoDoesNotExist
 	}
 	return err
-}
-
-func (db *appdbimpl) Stampa(){
-	var photo Photo
-	ris, _ := db.c.Query(`SELECT * FROM Photo`)
-
-	for ris.Next(){
-		err := ris.Scan(&photo.UserId,&photo.Id,&photo.Date,&photo.Url)
-
-		if err !=nil{
-			fmt.Printf("%s\n",err.Error())
-		}
-
-		fmt.Printf("userId %d photoid %d date %s url %s\n", photo.UserId, photo.Id,photo.Date,photo.Url)
-	}
-
-
-
 }

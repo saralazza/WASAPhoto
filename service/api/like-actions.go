@@ -1,12 +1,14 @@
 package api
 
 import (
-	"github.com/julienschmidt/httprouter"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
+	"github.com/julienschmidt/httprouter"
 
-	"strconv"
-	"net/http"
 	"encoding/json"
+	"errors"
+	"net/http"
+	"strconv"
 )
 
 // Add like to a photo
@@ -17,19 +19,19 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	likeuid, err = strconv.ParseUint(ps.ByName("likeuid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	photoid, err = strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -57,19 +59,19 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	likeuid, err= strconv.ParseUint(ps.ByName("likeuid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	photoid, err= strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -79,10 +81,10 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.RemoveLike(dbLike)
-	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if errors.Is(err, database.ErrorLikeDoesNotExist){
+		http.Error(w, err.Error(), http.StatusFound)
 	}
+	// TODO : else if per l'errore sull'autorizzazione e per l'internal server error
 
 	w.WriteHeader(http.StatusNoContent)
 

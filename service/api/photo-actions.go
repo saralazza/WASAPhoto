@@ -35,13 +35,12 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	
 	dbphoto := photo.PhotoFromApiToDatabase()
 	err = rt.db.RemovePhoto(dbphoto)
-	if errors.Is(err, database.ErrorFollowDoesNotExist){
+	if errors.Is(err, database.ErrorPhotoDoesNotExist){
 		http.Error(w, err.Error(), http.StatusFound)
 	}
 	// TODO : else if per l'errore sull'autorizzazione
 
 	w.WriteHeader(http.StatusNoContent)
-	rt.db.Stampa()
 }
 
 // Upload a photo
