@@ -607,6 +607,13 @@ components:
           type: integer
           minimum: 0
           example: 1
+        date:
+          description: Upload date
+          type: string
+          format: date-time
+          example: "2023-11-21T00:28:28Z"
+          maxLength: 20
+          minLength: 0
         userid:
           {$ref: '#/components/schemas/User/properties/id'}
         photoid:

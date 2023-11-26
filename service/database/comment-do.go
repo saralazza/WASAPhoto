@@ -2,6 +2,7 @@ package database
 
 import(
 	"errors"
+	"database/sql"
 )
 
 func (db *appdbimpl) RemoveComment(c Comment) error{
@@ -15,12 +16,23 @@ func (db *appdbimpl) RemoveComment(c Comment) error{
 	if err != nil{
 		return err
 	} else if check == 0 {
-		return errors.New(`Comment does not exist`)
+		return ErrorCommentDoesNotExist
 	}
 	return err
 }
 
-func (db *appdbimpl) SetComment( c Comment)  error{
-	_,err:= db.c.Exec(`INSERT INTO Comment (text, userid, photoid) VALUES (?, ?, ?)`, c.Text, c.UserId, c.PhotoId)
-	return err
+func (db *appdbimpl) SetComment( c Comment)  (uint64,error){
+	_,err:= db.c.Exec(`INSERT INTO Comment (text, userid, photoid, date) VALUES (?, ?, ?, ?)`, c.Text, c.UserId, c.PhotoId,c.Date)
+	if err != nil{
+		return 0,err
+	}
+	
+	var commentid uint64
+	err = db.c.QueryRow(`SELECT id FROM Comment WHERE text=? AND userid=? AND photoid=? AND date=?`, c.Text, c.UserId, c.PhotoId,c.Date).Scan(&commentid)
+	if errors.Is(err, sql.ErrNoRows){
+		return 0, ErrorCommentDoesNotExist
+	}else if err != nil{
+		return 0,err
+	}
+	return commentid, nil
 }

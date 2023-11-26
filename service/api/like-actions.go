@@ -18,19 +18,19 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	var photoid uint64
 
 	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	likeuid, err = strconv.ParseUint(ps.ByName("likeuid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	photoid, err = strconv.ParseUint(ps.ByName("photoid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -38,39 +38,39 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	like.UserId = likeuid
 	like.OwnerId = uid
 	like.PhotoId = photoid
-	
+
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.SetLike(dbLike)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("content-type", "application/json")
-	_=json.NewEncoder(w).Encode(like)
+	_ = json.NewEncoder(w).Encode(like)
 
 }
 
-// Delete like from a photo 
+// Delete like from a photo
 func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var like Like
 	var likeuid uint64
 	var photoid uint64
 
 	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	likeuid, err= strconv.ParseUint(ps.ByName("likeuid"), 10, 64)
-	if err != nil{
+	likeuid, err = strconv.ParseUint(ps.ByName("likeuid"), 10, 64)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	photoid, err= strconv.ParseUint(ps.ByName("photoid"), 10, 64)
-	if err != nil{
+	photoid, err = strconv.ParseUint(ps.ByName("photoid"), 10, 64)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -81,8 +81,8 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.RemoveLike(dbLike)
-	if errors.Is(err, database.ErrorLikeDoesNotExist){
-		http.Error(w, err.Error(), http.StatusFound)
+	if errors.Is(err, database.ErrorLikeDoesNotExist) {
+		http.Error(w, err.Error(), http.StatusNotFound)
 	}
 	// TODO : else if per l'errore sull'autorizzazione e per l'internal server error
 

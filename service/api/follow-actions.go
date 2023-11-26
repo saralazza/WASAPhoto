@@ -6,9 +6,9 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
-	"errors"
 )
 
 // Follow an user
@@ -17,13 +17,13 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	var followeuid uint64
 
 	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	followeuid, err = strconv.ParseUint(ps.ByName("followeduid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -33,13 +33,13 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 
 	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.SetFollow(dbFollow)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("content-type", "application/json")
-	_=json.NewEncoder(w).Encode(follow)
+	_ = json.NewEncoder(w).Encode(follow)
 
 }
 
@@ -50,14 +50,14 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	var followeuid uint64
 	var err error
 
-	uid, err= strconv.ParseUint(ps.ByName("uid"), 10, 64)
-	if err != nil{
+	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	followeuid, err = strconv.ParseUint(ps.ByName("followeduid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -67,8 +67,8 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 
 	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.RemoveFollow(dbFollow)
-	if errors.Is(err, database.ErrorFollowDoesNotExist){
-		http.Error(w, err.Error(), http.StatusFound)
+	if errors.Is(err, database.ErrorFollowDoesNotExist) {
+		http.Error(w, err.Error(), http.StatusNotFound)
 	}
 	// TODO : else if per l'errore sull'autorizzazione
 

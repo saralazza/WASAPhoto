@@ -2,15 +2,14 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
-	"errors"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
-	"github.com/julienschmidt/httprouter"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
-
+	"github.com/julienschmidt/httprouter"
 )
 
 // Delete a photo
@@ -19,24 +18,24 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	var photoid uint64
 
 	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	photoid, err = strconv.ParseUint(ps.ByName("photoid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	photo.Id = photoid
 	photo.UserId = uid
-	
+
 	dbphoto := photo.PhotoFromApiToDatabase()
 	err = rt.db.RemovePhoto(dbphoto)
-	if errors.Is(err, database.ErrorPhotoDoesNotExist){
-		http.Error(w, err.Error(), http.StatusFound)
+	if errors.Is(err, database.ErrorPhotoDoesNotExist) {
+		http.Error(w, err.Error(), http.StatusNotFound)
 	}
 	// TODO : else if per l'errore sull'autorizzazione
 
@@ -57,7 +56,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -69,14 +68,14 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	dbphoto := photo.PhotoFromApiToDatabase()
 	photo.Id, err = rt.db.SetPhoto(dbphoto)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_=json.NewEncoder(w).Encode(photo)
+	_ = json.NewEncoder(w).Encode(photo)
 
 }
 

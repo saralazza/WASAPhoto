@@ -55,7 +55,7 @@ type AppDatabase interface {
 	CheckUsername(string)(uint64,error)
 
 	RemoveComment(Comment) error
-	SetComment(Comment) error
+	SetComment(Comment) (uint64,error)
 
 	Ping() error
 }
@@ -125,7 +125,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 
 	sqlStmt = `CREATE TABLE IF NOT EXISTS Comment (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, text TEXT  NOT NULL, 
-		userid INTEGER NOT NULL, photoid INTEGER NOT NULL,
+		userid INTEGER NOT NULL, photoid INTEGER NOT NULL, date TEXT NOT NULL,
 		FOREIGN KEY (userid) REFERENCES User(id)
 		FOREIGN KEY (photoid) REFERENCES Photo(id)
 		);`

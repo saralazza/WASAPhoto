@@ -8,6 +8,7 @@ var ErrorFollowDoesNotExist = errors.New(`Follow does not exist`)
 var ErrorUserDoesNotExist = errors.New(`User does not exist`)
 var ErrorPhotoDoesNotExist = errors.New(`Photo does not exist`)
 var ErrorLikeDoesNotExist = errors.New(`Like does not exist`)
+var ErrorCommentDoesNotExist = errors.New(`Comment does not exist`)
 
 type User struct{
 	Id uint64 `json:"id"`
@@ -44,4 +45,5 @@ type Comment struct{
 	Id uint64 `json:"id"`
 	UserId uint64 `json:"userId"`
 	PhotoId uint64 `json:"photoId"`
+	Date string `json:"date"` 
 }
