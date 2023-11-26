@@ -1,5 +1,11 @@
 package database
 
+import(
+	"errors"
+)
+
+var ErrorFollowDoesNotExist = errors.New(`Follow does not exist`)
+
 type User struct{
 	Id uint64 `json:"id"`
 	Username string `json:"username"`

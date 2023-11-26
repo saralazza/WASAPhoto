@@ -57,6 +57,8 @@ type AppDatabase interface {
 	RemoveComment(Comment) error
 	SetComment(Comment) error
 
+	//Stampa()
+
 	Ping() error
 }
 
