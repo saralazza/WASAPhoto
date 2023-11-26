@@ -47,6 +47,7 @@ type AppDatabase interface {
 
 	SetLike(Like) error
 	RemoveLike(Like) error
+	RemoveLikes(Ban)error
 
 	SetPhoto(Photo) (uint64, error)
 	RemovePhoto(Photo) error
@@ -62,7 +63,10 @@ type AppDatabase interface {
 	RemoveComment(Comment) error
 	SetComment(Comment) (uint64,error)
 	ObtainCommentUserId(uint64) (uint64, error)
+	RemoveComments(Ban)error
 
+	SetBan(Ban)error
+	RemoveBan(Ban)error
 
 	Ping() error
 }

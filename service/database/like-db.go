@@ -23,3 +23,11 @@ func (db *appdbimpl) RemoveLike(l Like) error{
 	}
 	return err
 }
+
+func (db *appdbimpl) RemoveLikes(b Ban) error{
+	_, err := db.c.Exec(`DELETE FROM Like l, Photo p WHERE l.userid=? AND p.userid=? AND p.id=l.photoid`,b.BannedUserId,b.UserId)
+	if err != nil {
+		return err
+	}
+	return nil
+}

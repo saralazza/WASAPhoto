@@ -53,11 +53,9 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 // Unfollow an user
 func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var follow Follow
-	var uid uint64
 	var followeuid uint64
-	var err error
 
-	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -83,7 +81,6 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	if errors.Is(err, database.ErrorFollowDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 	}
-	// TODO : else if per l'errore sull'autorizzazione
 
 	w.WriteHeader(http.StatusNoContent)
 

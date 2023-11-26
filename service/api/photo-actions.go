@@ -93,5 +93,30 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 // Get the list of photos of an user
 func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var photos []database.Photo
 
+	userid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	
+	err = CheckAuthentication(r.Header.Get("Authorization"),userid)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	photos, err = rt.db.GetPhotos(userid)
+	if errors.Is(err,database.ErrorUserDoesNotExist){
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(photos)
 }
