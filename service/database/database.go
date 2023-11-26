@@ -53,6 +53,7 @@ type AppDatabase interface {
 
 	SetUser(User) (uint64,error)
 	CheckUsername(string)(uint64,error)
+	SetUsername(User)error
 
 	RemoveComment(Comment) error
 	SetComment(Comment) (uint64,error)
