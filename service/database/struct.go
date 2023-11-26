@@ -5,6 +5,8 @@ import(
 )
 
 var ErrorFollowDoesNotExist = errors.New(`Follow does not exist`)
+var ErrorUserDoesNotExist = errors.New(`User does not exist`)
+var ErrorPhotoDoesNotExist = errors.New(`Photo does not exist`)
 
 type User struct{
 	Id uint64 `json:"id"`

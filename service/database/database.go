@@ -48,7 +48,7 @@ type AppDatabase interface {
 	SetLike(Like) error
 	RemoveLike(Like) error
 
-	SetPhoto(Photo) error
+	SetPhoto(Photo) (uint64, error)
 	RemovePhoto(Photo) error
 
 	SetUser(User) (uint64,error)
@@ -57,7 +57,7 @@ type AppDatabase interface {
 	RemoveComment(Comment) error
 	SetComment(Comment) error
 
-	//Stampa()
+	Stampa()
 
 	Ping() error
 }
@@ -74,7 +74,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 
 	_,err := db.Exec("PRAGMA foreign_key = ON")
-	if db == nil {
+	if err != nil {
 		return nil, err
 	}
 

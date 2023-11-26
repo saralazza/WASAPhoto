@@ -23,17 +23,3 @@ func (db *appdbimpl) RemoveFollow(f Follow) error{
 	}
 	return err
 }
-
-/*func (db *appdbimpl) Stampa(){
-	var follow Follow
-	ris, _ := db.c.Query(`SELECT * FROM Follow`)
-
-	for ris.Next(){
-		_ = ris.Scan(&follow.UserId,&follow.FollowedUserId)
-
-		fmt.Printf("userId %d followeduid %d\n", follow.UserId, follow.FollowedUserId)
-	}
-
-
-
-}*/

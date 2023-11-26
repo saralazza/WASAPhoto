@@ -12,7 +12,7 @@ func (db *appdbimpl) SetUser(u User) (uint64,error){
 		var userid uint64
 		err = db.c.QueryRow(`SELECT id FROM User WHERE Username=?`, u.Username).Scan(&userid)
 		if errors.Is(err, sql.ErrNoRows){
-			return userid, errors.New("User do not exist")
+			return userid, ErrorUserDoesNotExist
 		}
 		return userid,nil
 	}

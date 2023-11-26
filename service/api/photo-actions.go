@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"errors"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 
 )
 
@@ -18,13 +20,13 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	photoid, err = strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -33,48 +35,45 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	
 	dbphoto := photo.PhotoFromApiToDatabase()
 	err = rt.db.RemovePhoto(dbphoto)
-	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if errors.Is(err, database.ErrorFollowDoesNotExist){
+		http.Error(w, err.Error(), http.StatusFound)
 	}
+	// TODO : else if per l'errore sull'autorizzazione
 
 	w.WriteHeader(http.StatusNoContent)
+	rt.db.Stampa()
 }
 
 // Upload a photo
 func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var photo Photo
 	var uid uint64
-	var url string
 
 	currentTime := time.Now()
 
 	err := json.NewDecoder(r.Body).Decode(&photo)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil{
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	
-	photo.Url = url
+
+	photo.UserId = uid
 	photo.Date = currentTime.Format("2006-01-02 15:04:05")
 	photo.LikeCounter = 0
 	photo.CommentCounter = 0
-	photo.UserId = uid
 
 	dbphoto := photo.PhotoFromApiToDatabase()
-	err = rt.db.SetPhoto(dbphoto)
+	photo.Id, err = rt.db.SetPhoto(dbphoto)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	photo = PhotoFromDatabaseToApi(dbphoto)
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
