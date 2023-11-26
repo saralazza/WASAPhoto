@@ -15,7 +15,7 @@ func (db *appdbimpl) SetUsername(u User) error{
 	if err != nil{
 		return err
 	}else if check!=0{
-		return errors.New("Username must be unic")
+		return errors.New("Username must be unique")
 	}
 
 	ris, err = db.c.Exec(`UPDATE User SET username=? WHERE id=?`, u.Username,u.Id)

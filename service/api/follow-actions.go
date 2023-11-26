@@ -31,6 +31,12 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	follow.UserId = uid
 	follow.FollowedUserId = followeuid
 
+	err = CheckAuthentication(r.Header.Get("Authorization"),uid)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.SetFollow(dbFollow)
 	if err != nil {
@@ -65,6 +71,12 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 
 	follow.UserId = uid
 	follow.FollowedUserId = followeuid
+
+	err = CheckAuthentication(r.Header.Get("Authorization"),uid)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.RemoveFollow(dbFollow)

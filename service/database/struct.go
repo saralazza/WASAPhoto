@@ -9,6 +9,7 @@ var ErrorUserDoesNotExist = errors.New(`User does not exist`)
 var ErrorPhotoDoesNotExist = errors.New(`Photo does not exist`)
 var ErrorLikeDoesNotExist = errors.New(`Like does not exist`)
 var ErrorCommentDoesNotExist = errors.New(`Comment does not exist`)
+var ErrorNotAuthorized = errors.New("User is not authorized")
 
 type User struct{
 	Id uint64 `json:"id"`

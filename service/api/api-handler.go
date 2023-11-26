@@ -21,7 +21,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.GET("/user/:uid/follow",rt.wrap(rt.getFollowList))
 
 	// User Information actions
-	rt.router.PUT("/user/:uid/myusername",rt.wrap(rt.setMyUserName))
+	rt.router.PUT("/user/:uid/myusername",rt.wrap(rt.setMyUserName)) // DONE
 	rt.router.GET("/user/:uid/stream",rt.wrap(rt.getMyStream))
 	rt.router.GET("/user/:uid/profile",rt.wrap(rt.getUserProfile))
 
