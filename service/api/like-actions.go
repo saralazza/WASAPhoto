@@ -39,6 +39,12 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	like.OwnerId = uid
 	like.PhotoId = photoid
 
+	err = CheckAuthentication(r.Header.Get("Authorization"),like.UserId)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.SetLike(dbLike)
 	if err != nil {
@@ -79,6 +85,12 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	like.UserId = likeuid
 	like.OwnerId = uid
 	like.PhotoId = photoid
+
+	err = CheckAuthentication(r.Header.Get("Authorization"),like.UserId)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.RemoveLike(dbLike)

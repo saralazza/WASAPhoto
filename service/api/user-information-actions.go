@@ -27,6 +27,12 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
+	err = CheckAuthentication(r.Header.Get("Authorization"),user.Id)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	dbuser := user.UserFromApiToDatabase()
 	err = rt.db.SetUsername(dbuser)
 	if errors.Is(err, database.ErrorUserDoesNotExist){

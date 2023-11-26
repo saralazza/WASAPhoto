@@ -37,6 +37,7 @@ import (
 func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var comment Comment
 	var commentid uint64
+	var userid uint64
 
 	photoid, err := strconv.ParseUint(ps.ByName("photoid"),10,64)
 	if err != nil {
@@ -52,6 +53,21 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 
 	comment.PhotoId = photoid
 	comment.Id = commentid
+
+	userid, err = rt.db.ObtainCommentUserId(commentid)
+	if errors.Is(err,database.ErrorCommentDoesNotExist){
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = CheckAuthentication(r.Header.Get("Authorization"),userid)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	dbcomment := comment.CommentFromApiToDatabase()
 	err = rt.db.RemoveComment(dbcomment)
@@ -85,6 +101,12 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	comment.Date = currentTime.Format("2006-01-02 15:04:05")
+
+	err = CheckAuthentication(r.Header.Get("Authorization"),comment.UserId)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	dbcomment := comment.CommentFromApiToDatabase()
 	comment.Id,err = rt.db.SetComment(dbcomment)

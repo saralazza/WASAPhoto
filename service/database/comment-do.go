@@ -36,3 +36,14 @@ func (db *appdbimpl) SetComment( c Comment)  (uint64,error){
 	}
 	return commentid, nil
 }
+
+func (db *appdbimpl) ObtainCommentUserId( commentid uint64)  (uint64,error){
+	var uid uint64
+	err := db.c.QueryRow(`SELECT userid FROM Comment WHERE id=?`, commentid).Scan(&uid)
+	if errors.Is(err, sql.ErrNoRows){
+		return 0, ErrorCommentDoesNotExist
+	}else if err != nil{
+		return 0,err
+	}
+	return uid, nil
+}

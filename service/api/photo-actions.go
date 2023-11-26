@@ -32,6 +32,12 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.Id = photoid
 	photo.UserId = uid
 
+	err = CheckAuthentication(r.Header.Get("Authorization"),photo.UserId)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	dbphoto := photo.PhotoFromApiToDatabase()
 	err = rt.db.RemovePhoto(dbphoto)
 	if errors.Is(err, database.ErrorPhotoDoesNotExist) {
@@ -65,6 +71,12 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.Date = currentTime.Format("2006-01-02 15:04:05")
 	photo.LikeCounter = 0
 	photo.CommentCounter = 0
+
+	err = CheckAuthentication(r.Header.Get("Authorization"),photo.UserId)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	dbphoto := photo.PhotoFromApiToDatabase()
 	photo.Id, err = rt.db.SetPhoto(dbphoto)

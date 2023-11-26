@@ -57,6 +57,7 @@ type AppDatabase interface {
 
 	RemoveComment(Comment) error
 	SetComment(Comment) (uint64,error)
+	ObtainCommentUserId(uint64) (uint64, error)
 
 	Ping() error
 }
