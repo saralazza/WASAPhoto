@@ -71,9 +71,12 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
 
-	// Check if table exists. If not, the database is empty, and we need to create the structure
-	var err error
+	_,err := db.Exec("PRAGMA foreign_key = ON")
+	if db == nil {
+		return nil, err
+	}
 
+	// Check if table exists. If not, the database is empty, and we need to create the structure
 	sqlStmt := `CREATE TABLE IF NOT EXISTS User (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
 		username TEXT  NOT NULL UNIQUE
 		);`
