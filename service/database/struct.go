@@ -48,3 +48,8 @@ type Comment struct{
 	PhotoId uint64 `json:"photoId"`
 	Date string `json:"date"` 
 }
+
+type Stream struct{
+	UserId uint64 `json:"userId"`
+	Photos []Photo `json:"photos"`
+}

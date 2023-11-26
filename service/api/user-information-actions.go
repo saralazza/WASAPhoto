@@ -51,7 +51,31 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 
 // Get the user stream composed by photos from following users
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var stream database.Stream
 
+	userid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	stream.UserId = userid
+
+	err = CheckAuthentication(r.Header.Get("Authorization"),userid)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	stream.Photos, err = rt.db.GetStream(userid)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(stream)
+	
 }
 
 // Get user profile composed by the user’s photos, how many photos have been uploaded, and the user’s followers and following.

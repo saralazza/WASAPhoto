@@ -54,10 +54,12 @@ type AppDatabase interface {
 	SetUser(User) (uint64,error)
 	CheckUsername(string)(uint64,error)
 	SetUsername(User)error
+	GetStream(uint64)([]Photo, error)
 
 	RemoveComment(Comment) error
 	SetComment(Comment) (uint64,error)
 	ObtainCommentUserId(uint64) (uint64, error)
+
 
 	Ping() error
 }

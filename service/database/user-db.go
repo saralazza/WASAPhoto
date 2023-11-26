@@ -1,6 +1,7 @@
 package database
 
-import(
+import (
+	"database/sql"
 	"errors"
 )
 
@@ -29,4 +30,51 @@ func (db *appdbimpl) SetUsername(u User) error{
 		return ErrorUserDoesNotExist
 	}
 	return nil
+}
+
+func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error){
+	var ris []Photo
+	
+	rows, err := db.c.Query(`SELECT id, url, date FROM Photo WHERE userid IN 
+		(SELECT followeduserid FROM Follow WHERE userid=? AND followeduserid NOT IN 
+		(SELECT userid FROM Ban WHERE banneduserid=?))`,userid,userid)
+	if err != nil {
+		return nil, ErrorUserDoesNotExist
+	}
+
+	for rows.Next(){
+		var photo Photo
+
+		err = rows.Scan(&photo.Id,&photo.Url,&photo.Date)
+		if err != nil{
+			return nil, err
+		}
+
+		err = db.c.QueryRow(`SELECT userid FROM Photo WHERE id =?`,photo.Id).Scan(&photo.UserId)
+		if err != nil{
+			return nil, err
+		}else if errors.Is(err,sql.ErrNoRows){
+			return nil, err
+		}
+
+		err = db.c.QueryRow(`SELECT COUNT(*) FROM Like WHERE photoid=?`,photo.Id).Scan(&photo.LikeCounter)
+		if err != nil{
+			return nil, err
+		}else if errors.Is(err,sql.ErrNoRows){
+			return nil, err
+		}
+
+		err = db.c.QueryRow(`SELECT COUNT(*) FROM Comment WHERE photoid=?`,photo.Id).Scan(&photo.CommentCounter)
+		if err != nil{
+			return nil, err
+		}else if errors.Is(err,sql.ErrNoRows){
+			return nil, err
+		}
+
+		ris = append(ris, photo)
+	}
+
+	_ = rows.Close()
+
+	return ris, nil
 }

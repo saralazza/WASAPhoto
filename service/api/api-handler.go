@@ -22,7 +22,7 @@ func (rt *_router) Handler() http.Handler {
 
 	// User Information actions
 	rt.router.PUT("/user/:uid/myusername",rt.wrap(rt.setMyUserName)) // DONE
-	rt.router.GET("/user/:uid/stream",rt.wrap(rt.getMyStream))
+	rt.router.GET("/user/:uid/stream",rt.wrap(rt.getMyStream)) // DONE
 	rt.router.GET("/user/:uid/profile",rt.wrap(rt.getUserProfile))
 
 	// Photo actions
