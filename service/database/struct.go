@@ -11,6 +11,7 @@ var ErrorLikeDoesNotExist = errors.New(`Like does not exist`)
 var ErrorCommentDoesNotExist = errors.New(`Comment does not exist`)
 var ErrorNotAuthorized = errors.New(`User is not authorized`)
 var ErrorBanDoesNotExist = errors.New(`Ban does not exist`)
+var ErrorElementIsAlreadyExist = errors.New("This element is already present into the database")
 
 type User struct{
 	Id uint64 `json:"id"`

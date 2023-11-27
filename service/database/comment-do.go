@@ -1,8 +1,10 @@
 package database
 
-import(
-	"errors"
+import (
 	"database/sql"
+	"errors"
+
+	"github.com/mattn/go-sqlite3"
 )
 
 func (db *appdbimpl) RemoveComment(c Comment) error{
@@ -24,6 +26,13 @@ func (db *appdbimpl) RemoveComment(c Comment) error{
 func (db *appdbimpl) SetComment( c Comment)  (uint64,error){
 	_,err:= db.c.Exec(`INSERT INTO Comment (text, userid, photoid, date) VALUES (?, ?, ?, ?)`, c.Text, c.UserId, c.PhotoId,c.Date)
 	if err != nil{
+		var sqlErr sqlite3.Error
+		// Check if the tuple is already exist
+		if errors.As(err, &sqlErr) && sqlErr.Code == sqlite3.ErrConstraint {
+			// Chiave duplicata, gestisci di conseguenza
+			return 0, ErrorElementIsAlreadyExist
+		}
+		
 		return 0,err
 	}
 	

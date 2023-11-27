@@ -1,5 +1,11 @@
 package database
 
+import (
+	"errors"
+
+	"github.com/mattn/go-sqlite3"
+)
+
 func (db *appdbimpl) SetLike(l Like) error{
 	_,err:= db.c.Exec(`INSERT INTO Like (photoid, userid) VALUES (?, ?)`, l.PhotoId, l.UserId)
 	if err != nil{
@@ -11,6 +17,13 @@ func (db *appdbimpl) SetLike(l Like) error{
 func (db *appdbimpl) RemoveLike(l Like) error{
 	ris, err := db.c.Exec(`DELETE FROM Like WHERE photoid=? and userid=?`, l.PhotoId, l.UserId)
 	if err != nil{
+		var sqlErr sqlite3.Error
+		// Check if the tuple is already exist
+		if errors.As(err, &sqlErr) && sqlErr.Code == sqlite3.ErrConstraint {
+			// Chiave duplicata, gestisci di conseguenza
+			return ErrorElementIsAlreadyExist
+		}
+		
 		return err
 	}
 

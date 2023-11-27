@@ -1,8 +1,21 @@
 package database
 
+import (
+	"errors"
+
+	"github.com/mattn/go-sqlite3"
+)
+
 func (db *appdbimpl) SetBan(b Ban)error{
 	_,err:= db.c.Exec(`INSERT INTO Ban (userid, banneduserid) VALUES (?, ?)`, b.UserId, b.BannedUserId)
 	if err != nil{
+		var sqlErr sqlite3.Error
+		// Check if the tuple is already exist
+		if errors.As(err, &sqlErr) && sqlErr.Code == sqlite3.ErrConstraint {
+			// Chiave duplicata, gestisci di conseguenza
+			return ErrorElementIsAlreadyExist
+		}
+		
 		return err
 	}
 	return nil

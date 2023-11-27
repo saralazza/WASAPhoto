@@ -3,11 +3,20 @@ package database
 import (
 	"database/sql"
 	"errors"
+
+	"github.com/mattn/go-sqlite3"
 )
 
 func (db *appdbimpl) SetPhoto(p Photo) (uint64,error){
 	_,err:= db.c.Exec(`INSERT INTO Photo (userid, date, url) VALUES (?, ?, ?)`, p.UserId, p.Date, p.Url)
 	if err != nil{
+		var sqlErr sqlite3.Error
+		// Check if the tuple is already exist
+		if errors.As(err, &sqlErr) && sqlErr.Code == sqlite3.ErrConstraint {
+			// Chiave duplicata, gestisci di conseguenza
+			return 0, ErrorElementIsAlreadyExist
+		}
+		
 		return 0,err
 	}
 	
