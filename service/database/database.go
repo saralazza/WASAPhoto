@@ -48,6 +48,7 @@ type AppDatabase interface {
 	SetLike(Like) error
 	RemoveLike(Like) error
 	RemoveLikes(Ban)error
+	GetLikes(uint64)([]string,error)
 
 	SetPhoto(Photo) (uint64, error)
 	RemovePhoto(Photo) error

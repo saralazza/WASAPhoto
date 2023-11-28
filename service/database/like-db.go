@@ -44,3 +44,31 @@ func (db *appdbimpl) RemoveLikes(b Ban) error{
 	}
 	return nil
 }
+
+func (db *appdbimpl) GetLikes(photoid uint64) ([]string,error){
+	var likes []string
+
+	rows, err := db.c.Query(`SELECT userid FROM Like WHERE photoid=?`,photoid)
+	if err != nil {
+		return nil, ErrorPhotoDoesNotExist
+	}
+
+	for rows.Next(){
+		var id uint64
+		var like string
+
+		err = rows.Scan(&id)
+		if err != nil{
+			return nil, err
+		}
+
+		like, err = db.GetUsernameById(id)
+		if err != nil{
+			return nil, err
+		}
+
+		likes = append(likes, like)
+	}
+
+	return likes, nil
+}

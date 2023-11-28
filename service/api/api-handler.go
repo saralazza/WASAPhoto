@@ -11,9 +11,9 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/session",rt.wrap(rt.doLogin)) // DONE
 
 	// Ban actions
-	rt.router.PUT("/user/:uid/ban/:banneduid",rt.wrap(rt.banUser)) // DONE DA TESTARE
-	rt.router.DELETE("/user/:uid/ban/:banneduid",rt.wrap(rt.unbanUser)) // DONE DA TESTARE
-	rt.router.GET("/user/:uid/ban",rt.wrap(rt.getBanList))
+	rt.router.PUT("/user/:uid/ban/:banneduid",rt.wrap(rt.banUser)) // DONE 
+	rt.router.DELETE("/user/:uid/ban/:banneduid",rt.wrap(rt.unbanUser)) // DONE 
+	rt.router.GET("/user/:uid/ban",rt.wrap(rt.getBanList)) 
 
 	// Follow actions
 	rt.router.PUT("/user/:uid/follow/:followeduid",rt.wrap(rt.followUser)) // DONE
@@ -23,7 +23,7 @@ func (rt *_router) Handler() http.Handler {
 	// User Information actions
 	rt.router.PUT("/user/:uid/myusername",rt.wrap(rt.setMyUserName)) // DONE
 	rt.router.GET("/user/:uid/stream",rt.wrap(rt.getMyStream)) // DONE
-	rt.router.GET("/user/:uid/profile",rt.wrap(rt.getUserProfile))
+	rt.router.GET("/user/:uid/profile",rt.wrap(rt.getUserProfile)) // DONE
 
 	// Photo actions
 	rt.router.DELETE("/user/:uid/photo/:photoid",rt.wrap(rt.deletePhoto)) // DONE
