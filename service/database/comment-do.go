@@ -58,7 +58,7 @@ func (db *appdbimpl) ObtainCommentUserId( commentid uint64)  (uint64,error){
 }
 
 func (db *appdbimpl) RemoveComments( b Ban) error{
-	_, err := db.c.Exec(`DELETE FROM Comment c, Photo p WHERE c.userid=? AND p.userid=? AND p.id=c.photoid`,b.BannedUserId,b.UserId)
+	_, err := db.c.Exec(`DELETE FROM Comment WHERE userid=? AND photoid IN (SELECT id FROM Photo WHERE userid=?)`,b.BannedUserId,b.UserId)
 	if err != nil {
 		return err
 	}

@@ -47,7 +47,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.SetLike(dbLike)
-	if err != nil {
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -96,8 +96,11 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	err = rt.db.RemoveLike(dbLike)
 	if errors.Is(err, database.ErrorLikeDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}else if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	// TODO : else if per l'errore sull'autorizzazione e per l'internal server error
 
 	w.WriteHeader(http.StatusNoContent)
 

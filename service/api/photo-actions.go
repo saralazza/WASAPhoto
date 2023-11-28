@@ -42,9 +42,12 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	err = rt.db.RemovePhoto(dbphoto)
 	if errors.Is(err, database.ErrorPhotoDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}else if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	// TODO : else if per l'errore sull'autorizzazione
-
+	
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -80,7 +83,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	dbphoto := photo.PhotoFromApiToDatabase()
 	photo.Id, err = rt.db.SetPhoto(dbphoto)
-	if err != nil {
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -22,7 +22,7 @@ func (db *appdbimpl) SetBan(b Ban)error{
 }
 
 func (db *appdbimpl) RemoveBan(b Ban)error{
-	ris, err := db.c.Exec(`DELETE FROM Ban WHERE bannededuserid=? and userid=?`, b.BannedUserId, b.UserId)
+	ris, err := db.c.Exec(`DELETE FROM Ban WHERE banneduserid=? and userid=?`, b.BannedUserId, b.UserId)
 	if err != nil{
 		return err
 	}
@@ -34,6 +34,6 @@ func (db *appdbimpl) RemoveBan(b Ban)error{
 	} else if check == 0 {
 		return ErrorBanDoesNotExist
 	}
-	return err
+	return nil
 	
 }

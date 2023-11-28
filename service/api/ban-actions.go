@@ -22,7 +22,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	banneduid, err = strconv.ParseUint(ps.ByName("followeduid"), 10, 64)
+	banneduid, err = strconv.ParseUint(ps.ByName("banneduid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -39,7 +39,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	dbBan := ban.BanFromApiToDatabase()
 	err = rt.db.SetBan(dbBan)
-	if err != nil {
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -73,7 +73,7 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	banneduid, err = strconv.ParseUint(ps.ByName("followeduid"), 10, 64)
+	banneduid, err = strconv.ParseUint(ps.ByName("banneduid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -92,6 +92,10 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 	err = rt.db.RemoveBan(dbBan)
 	if errors.Is(err, database.ErrorBanDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}else if err!= nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)

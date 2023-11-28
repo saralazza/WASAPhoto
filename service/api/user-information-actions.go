@@ -42,7 +42,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	}else if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return 
-	} // TODO aggiungere errore autorizzazione
+	}
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)

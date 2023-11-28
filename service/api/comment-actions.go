@@ -12,27 +12,6 @@ import (
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 )
 
-/*
-/user/{uid}/photo/{photoid}/comments/{commentid}:
-    parameters:
-      - {$ref: "#/components/parameters/uid"}
-      - {$ref: "#/components/parameters/photoid"}
-      - {$ref: "#/components/parameters/commentid"}
-      
-    delete:
-      security:
-      - bearerAuth: []
-      description: Delete comment from a photo
-      summary: Uncomment photo
-      tags: ["comment"]
-      operationId: uncommentPhoto
-      responses:
-        "204":
-          description: Comment deleted successfully
-        "400": {$ref: '#/components/responses/BadRequest'}
-        "401": {$ref: '#/components/responses/Unauthorized'}
-        "500": {$ref: '#/components/responses/InternalServerError'}*/
-
 // Delete comment from a photo
 func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var comment Comment
@@ -73,8 +52,11 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 	err = rt.db.RemoveComment(dbcomment)
 	if errors.Is(err, database.ErrorCommentDoesNotExist){
 		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}else if err!= nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	// TODO : else if per l'errore sull'autorizzazione
 
 
 	w.WriteHeader(http.StatusNoContent)
@@ -110,7 +92,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	dbcomment := comment.CommentFromApiToDatabase()
 	comment.Id,err = rt.db.SetComment(dbcomment)
-	if err != nil {
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

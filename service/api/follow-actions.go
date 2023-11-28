@@ -39,7 +39,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 
 	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.SetFollow(dbFollow)
-	if err != nil {
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -80,6 +80,10 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	err = rt.db.RemoveFollow(dbFollow)
 	if errors.Is(err, database.ErrorFollowDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}else if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
