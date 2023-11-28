@@ -101,10 +101,38 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	w.WriteHeader(http.StatusCreated)
 	_=json.NewEncoder(w).Encode(comment)
 
-
 }
 
 // Get the list of comments of a photo
 func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var comments []database.Comment
+
+	photoid, err := strconv.ParseUint(ps.ByName("photoid"),10,64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	userid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = CheckAuthentication(r.Header.Get("Authorization"),userid)
+	if errors.Is(err,database.ErrorNotAuthorized){
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	comments, err = rt.db.GetComments(photoid)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(comments)
 
 }

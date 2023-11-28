@@ -50,7 +50,7 @@ func (db *appdbimpl) GetLikes(photoid uint64) ([]string,error){
 
 	rows, err := db.c.Query(`SELECT userid FROM Like WHERE photoid=?`,photoid)
 	if err != nil {
-		return nil, ErrorPhotoDoesNotExist
+		return nil, err
 	}
 
 	for rows.Next(){
@@ -69,6 +69,8 @@ func (db *appdbimpl) GetLikes(photoid uint64) ([]string,error){
 
 		likes = append(likes, like)
 	}
+
+	_ = rows.Close()
 
 	return likes, nil
 }

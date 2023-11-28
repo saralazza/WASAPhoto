@@ -111,10 +111,7 @@ func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	photos, err = rt.db.GetPhotos(userid)
-	if errors.Is(err,database.ErrorUserDoesNotExist){
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}else if err != nil{
+	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

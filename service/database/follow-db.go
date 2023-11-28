@@ -36,3 +36,33 @@ func (db *appdbimpl) RemoveFollow(f Follow) error{
 	}
 	return err
 }
+
+func (db *appdbimpl) GetFollowings(userid uint64) ([]string,error){
+	var followings []string
+
+	rows, err := db.c.Query(`SELECT followeduserid FROM Follow WHERE userid=?`,userid)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next(){
+		var id uint64
+		var following string
+
+		err = rows.Scan(&id)
+		if err != nil{
+			return nil, err
+		}
+
+		following, err = db.GetUsernameById(id)
+		if err != nil{
+			return nil, err
+		}
+
+		followings = append(followings, following)
+	}
+
+	_ = rows.Close()
+
+	return followings, nil
+}

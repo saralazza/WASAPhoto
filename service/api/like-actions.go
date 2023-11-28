@@ -130,10 +130,7 @@ func (rt *_router) getLikes(w http.ResponseWriter, r *http.Request, ps httproute
 	}
 
 	likes, err = rt.db.GetLikes(photoid)
-	if errors.Is(err,database.ErrorPhotoDoesNotExist){
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}else if err != nil{
+	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

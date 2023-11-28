@@ -64,3 +64,27 @@ func (db *appdbimpl) RemoveComments( b Ban) error{
 	}
 	return nil
 }
+
+func (db *appdbimpl) GetComments( photoid uint64) ([]Comment, error){
+	var comments []Comment
+
+	rows, err := db.c.Query(`SELECT id,text,userid FROM Comment WHERE photoid=?`,photoid)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next(){
+		var comment Comment
+
+		err = rows.Scan(&comment.Id,&comment.Text,&comment.UserId)
+		if err != nil{
+			return nil, err
+		}
+
+		comments = append(comments, comment)
+	}
+
+	_ = rows.Close()
+
+	return comments, nil
+}
