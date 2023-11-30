@@ -63,6 +63,10 @@ func (db *appdbimpl) GetBannings(userid uint64) ([]string, error) {
 		bannings = append(bannings, banning)
 	}
 
+	if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
 	_ = rows.Close()
 
 	return bannings, nil

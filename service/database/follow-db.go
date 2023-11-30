@@ -62,6 +62,10 @@ func (db *appdbimpl) GetFollowings(userid uint64) ([]string, error) {
 		followings = append(followings, following)
 	}
 
+	if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
 	_ = rows.Close()
 
 	return followings, nil

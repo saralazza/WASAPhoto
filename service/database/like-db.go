@@ -70,6 +70,10 @@ func (db *appdbimpl) GetLikes(photoid uint64) ([]string, error) {
 		likes = append(likes, like)
 	}
 
+	if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
 	_ = rows.Close()
 
 	return likes, nil

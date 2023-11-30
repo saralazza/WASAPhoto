@@ -65,6 +65,10 @@ func (db *appdbimpl) GetPhotos(userid uint64) ([]Photo, error) {
 		photos = append(photos, photo)
 	}
 
+	if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
 	_ = rows.Close()
 
 	return photos, nil

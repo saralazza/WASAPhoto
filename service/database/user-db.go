@@ -74,6 +74,10 @@ func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error) {
 		ris = append(ris, photo)
 	}
 
+	if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
 	_ = rows.Close()
 
 	return ris, nil

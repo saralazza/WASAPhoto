@@ -84,6 +84,10 @@ func (db *appdbimpl) GetComments(photoid uint64) ([]Comment, error) {
 		comments = append(comments, comment)
 	}
 
+	if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
 	_ = rows.Close()
 
 	return comments, nil
