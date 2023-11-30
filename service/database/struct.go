@@ -4,14 +4,14 @@ import (
 	"errors"
 )
 
-var ErrorFollowDoesNotExist = errors.New(`Follow does not exist`)
-var ErrorUserDoesNotExist = errors.New(`User does not exist`)
-var ErrorPhotoDoesNotExist = errors.New(`Photo does not exist`)
-var ErrorLikeDoesNotExist = errors.New(`Like does not exist`)
-var ErrorCommentDoesNotExist = errors.New(`Comment does not exist`)
-var ErrorNotAuthorized = errors.New(`User is not authorized`)
-var ErrorBanDoesNotExist = errors.New(`Ban does not exist`)
-var ErrorElementIsAlreadyExist = errors.New("This element is already present into the database")
+var ErrFollowDoesNotExist = errors.New(`Follow does not exist`)
+var ErrUserDoesNotExist = errors.New(`User does not exist`)
+var ErrPhotoDoesNotExist = errors.New(`Photo does not exist`)
+var ErrLikeDoesNotExist = errors.New(`Like does not exist`)
+var ErrCommentDoesNotExist = errors.New(`Comment does not exist`)
+var ErrNotAuthorized = errors.New(`User is not authorized`)
+var ErrBanDoesNotExist = errors.New(`Ban does not exist`)
+var ErrElementIsAlreadyExist = errors.New("This element is already present into the database")
 
 type User struct {
 	Id       uint64 `json:"id"`

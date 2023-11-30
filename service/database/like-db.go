@@ -21,7 +21,7 @@ func (db *appdbimpl) RemoveLike(l Like) error {
 		// Check if the tuple is already exist
 		if errors.As(err, &sqlErr) && sqlErr.Code == sqlite3.ErrConstraint {
 			// Chiave duplicata, gestisci di conseguenza
-			return ErrorElementIsAlreadyExist
+			return ErrElementIsAlreadyExist
 		}
 
 		return err
@@ -32,7 +32,7 @@ func (db *appdbimpl) RemoveLike(l Like) error {
 	if err != nil {
 		return err
 	} else if check == 0 {
-		return ErrorLikeDoesNotExist
+		return ErrLikeDoesNotExist
 	}
 	return err
 }

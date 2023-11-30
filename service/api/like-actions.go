@@ -40,14 +40,14 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	like.PhotoId = photoid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), like.UserId)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.SetLike(dbLike)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
+	if err != nil && !errors.Is(err, database.ErrElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -87,14 +87,14 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	like.PhotoId = photoid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), like.UserId)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.RemoveLike(dbLike)
-	if errors.Is(err, database.ErrorLikeDoesNotExist) {
+	if errors.Is(err, database.ErrLikeDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
@@ -124,7 +124,7 @@ func (rt *_router) getLikes(w http.ResponseWriter, r *http.Request, ps httproute
 	}
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}

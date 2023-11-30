@@ -33,14 +33,14 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.UserId = uid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), photo.UserId)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbphoto := photo.PhotoFromApiToDatabase()
 	err = rt.db.RemovePhoto(dbphoto)
-	if errors.Is(err, database.ErrorPhotoDoesNotExist) {
+	if errors.Is(err, database.ErrPhotoDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
@@ -76,14 +76,14 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.CommentCounter = 0
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), photo.UserId)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbphoto := photo.PhotoFromApiToDatabase()
 	photo.Id, err = rt.db.SetPhoto(dbphoto)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
+	if err != nil && !errors.Is(err, database.ErrElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -105,7 +105,7 @@ func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}

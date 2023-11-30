@@ -32,14 +32,14 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	follow.FollowedUserId = followeuid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.SetFollow(dbFollow)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
+	if err != nil && !errors.Is(err, database.ErrElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -71,14 +71,14 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	follow.FollowedUserId = followeuid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbFollow := follow.FollowFromApiToDatabase()
 	err = rt.db.RemoveFollow(dbFollow)
-	if errors.Is(err, database.ErrorFollowDoesNotExist) {
+	if errors.Is(err, database.ErrFollowDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
@@ -101,7 +101,7 @@ func (rt *_router) getFollowList(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}

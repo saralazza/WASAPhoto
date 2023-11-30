@@ -32,14 +32,14 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	ban.BannedUserId = banneduid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbBan := ban.BanFromApiToDatabase()
 	err = rt.db.SetBan(dbBan)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
+	if err != nil && !errors.Is(err, database.ErrElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -83,14 +83,14 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 	ban.BannedUserId = banneduid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbBan := ban.BanFromApiToDatabase()
 	err = rt.db.RemoveBan(dbBan)
-	if errors.Is(err, database.ErrorBanDoesNotExist) {
+	if errors.Is(err, database.ErrBanDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
@@ -113,7 +113,7 @@ func (rt *_router) getBanList(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}

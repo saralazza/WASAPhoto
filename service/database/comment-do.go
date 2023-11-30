@@ -18,7 +18,7 @@ func (db *appdbimpl) RemoveComment(c Comment) error {
 	if err != nil {
 		return err
 	} else if check == 0 {
-		return ErrorCommentDoesNotExist
+		return ErrCommentDoesNotExist
 	}
 	return err
 }
@@ -30,7 +30,7 @@ func (db *appdbimpl) SetComment(c Comment) (uint64, error) {
 		// Check if the tuple is already exist
 		if errors.As(err, &sqlErr) && sqlErr.Code == sqlite3.ErrConstraint {
 			// Chiave duplicata, gestisci di conseguenza
-			return 0, ErrorElementIsAlreadyExist
+			return 0, ErrElementIsAlreadyExist
 		}
 
 		return 0, err
@@ -39,7 +39,7 @@ func (db *appdbimpl) SetComment(c Comment) (uint64, error) {
 	var commentid uint64
 	err = db.c.QueryRow(`SELECT id FROM Comment WHERE text=? AND userid=? AND photoid=? AND date=?`, c.Text, c.UserId, c.PhotoId, c.Date).Scan(&commentid)
 	if errors.Is(err, sql.ErrNoRows) {
-		return 0, ErrorCommentDoesNotExist
+		return 0, ErrCommentDoesNotExist
 	} else if err != nil {
 		return 0, err
 	}
@@ -50,7 +50,7 @@ func (db *appdbimpl) ObtainCommentUserId(commentid uint64) (uint64, error) {
 	var uid uint64
 	err := db.c.QueryRow(`SELECT userid FROM Comment WHERE id=?`, commentid).Scan(&uid)
 	if errors.Is(err, sql.ErrNoRows) {
-		return 0, ErrorCommentDoesNotExist
+		return 0, ErrCommentDoesNotExist
 	} else if err != nil {
 		return 0, err
 	}

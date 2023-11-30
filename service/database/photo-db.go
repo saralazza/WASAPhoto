@@ -14,7 +14,7 @@ func (db *appdbimpl) SetPhoto(p Photo) (uint64, error) {
 		// Check if the tuple is already exist
 		if errors.As(err, &sqlErr) && sqlErr.Code == sqlite3.ErrConstraint {
 			// Chiave duplicata, gestisci di conseguenza
-			return 0, ErrorElementIsAlreadyExist
+			return 0, ErrElementIsAlreadyExist
 		}
 
 		return 0, err
@@ -23,7 +23,7 @@ func (db *appdbimpl) SetPhoto(p Photo) (uint64, error) {
 	var photoid uint64
 	err = db.c.QueryRow(`SELECT id FROM Photo WHERE userid=? AND date=? AND url=?`, p.UserId, p.Date, p.Url).Scan(&photoid)
 	if errors.Is(err, sql.ErrNoRows) {
-		return 0, ErrorPhotoDoesNotExist
+		return 0, ErrPhotoDoesNotExist
 	} else if err != nil {
 		return 0, err
 	}
@@ -41,7 +41,7 @@ func (db *appdbimpl) RemovePhoto(p Photo) error {
 	if err != nil {
 		return err
 	} else if check == 0 {
-		return ErrorPhotoDoesNotExist
+		return ErrPhotoDoesNotExist
 	}
 	return err
 }

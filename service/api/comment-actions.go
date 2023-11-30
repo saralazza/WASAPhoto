@@ -34,7 +34,7 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 	comment.Id = commentid
 
 	userid, err = rt.db.ObtainCommentUserId(commentid)
-	if errors.Is(err, database.ErrorCommentDoesNotExist) {
+	if errors.Is(err, database.ErrCommentDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else if err != nil {
@@ -43,14 +43,14 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbcomment := comment.CommentFromApiToDatabase()
 	err = rt.db.RemoveComment(dbcomment)
-	if errors.Is(err, database.ErrorCommentDoesNotExist) {
+	if errors.Is(err, database.ErrCommentDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
@@ -84,14 +84,14 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	comment.Date = currentTime.Format("2006-01-02 15:04:05")
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), comment.UserId)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbcomment := comment.CommentFromApiToDatabase()
 	comment.Id, err = rt.db.SetComment(dbcomment)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
+	if err != nil && !errors.Is(err, database.ErrElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -119,7 +119,7 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}

@@ -13,7 +13,7 @@ func (db *appdbimpl) SetBan(b Ban) error {
 		// Check if the tuple is already exist
 		if errors.As(err, &sqlErr) && sqlErr.Code == sqlite3.ErrConstraint {
 			// Chiave duplicata, gestisci di conseguenza
-			return ErrorElementIsAlreadyExist
+			return ErrElementIsAlreadyExist
 		}
 
 		return err
@@ -32,7 +32,7 @@ func (db *appdbimpl) RemoveBan(b Ban) error {
 	if err != nil {
 		return err
 	} else if check == 0 {
-		return ErrorBanDoesNotExist
+		return ErrBanDoesNotExist
 	}
 	return nil
 

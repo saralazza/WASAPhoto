@@ -29,14 +29,14 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), user.Id)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbuser := user.UserFromApiToDatabase()
 	err = rt.db.SetUsername(dbuser)
-	if errors.Is(err, database.ErrorUserDoesNotExist) {
+	if errors.Is(err, database.ErrUserDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
@@ -61,7 +61,7 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 	stream.UserId = userid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
@@ -89,7 +89,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
-	if errors.Is(err, database.ErrorNotAuthorized) {
+	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
@@ -104,7 +104,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	profile.Photos, err = rt.db.GetPhotos(userid)
-	if errors.Is(err, database.ErrorUserDoesNotExist) {
+	if errors.Is(err, database.ErrUserDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else if err != nil {
@@ -113,7 +113,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	profile.PhotoCounter, profile.FollowerCounter, profile.FollowingCounter, err = rt.db.GetProfile(userid)
-	if errors.Is(err, database.ErrorUserDoesNotExist) {
+	if errors.Is(err, database.ErrUserDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else if err != nil {

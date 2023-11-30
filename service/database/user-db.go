@@ -27,7 +27,7 @@ func (db *appdbimpl) SetUsername(u User) error {
 	if err != nil {
 		return err
 	} else if check == 0 {
-		return ErrorUserDoesNotExist
+		return ErrUserDoesNotExist
 	}
 	return nil
 }
@@ -39,7 +39,7 @@ func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error) {
 		(SELECT followeduserid FROM Follow WHERE userid=? AND followeduserid NOT IN 
 		(SELECT userid FROM Ban WHERE banneduserid=?))`, userid, userid)
 	if err != nil {
-		return nil, ErrorUserDoesNotExist
+		return nil, ErrUserDoesNotExist
 	}
 
 	for rows.Next() {
@@ -85,7 +85,7 @@ func (db *appdbimpl) GetUsernameById(userid uint64) (string, error) {
 	if err != nil {
 		return "", err
 	} else if errors.Is(err, sql.ErrNoRows) {
-		return "", ErrorUserDoesNotExist
+		return "", ErrUserDoesNotExist
 	}
 	return username, nil
 }
@@ -96,7 +96,7 @@ func (db *appdbimpl) GetProfile(userid uint64) (uint64, uint64, uint64, error) {
 	if err != nil {
 		return 0, 0, 0, err
 	} else if errors.Is(err, sql.ErrNoRows) {
-		return 0, 0, 0, ErrorUserDoesNotExist
+		return 0, 0, 0, ErrUserDoesNotExist
 	}
 
 	var followerCounter uint64
@@ -104,7 +104,7 @@ func (db *appdbimpl) GetProfile(userid uint64) (uint64, uint64, uint64, error) {
 	if err != nil {
 		return 0, 0, 0, err
 	} else if errors.Is(err, sql.ErrNoRows) {
-		return 0, 0, 0, ErrorUserDoesNotExist
+		return 0, 0, 0, ErrUserDoesNotExist
 	}
 
 	var followingCounter uint64
@@ -112,7 +112,7 @@ func (db *appdbimpl) GetProfile(userid uint64) (uint64, uint64, uint64, error) {
 	if err != nil {
 		return 0, 0, 0, err
 	} else if errors.Is(err, sql.ErrNoRows) {
-		return 0, 0, 0, ErrorUserDoesNotExist
+		return 0, 0, 0, ErrUserDoesNotExist
 	}
 
 	return photoCounter, followerCounter, followingCounter, nil

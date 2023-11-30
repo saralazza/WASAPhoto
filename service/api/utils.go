@@ -11,12 +11,12 @@ func CheckAuthentication(auth string, uid uint64) error {
 	re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`)
 	stringToken := re.FindAllString(auth, -1)
 	if len(stringToken) == 0 {
-		return database.ErrorNotAuthorized
+		return database.ErrNotAuthorized
 	}
 	authuid, _ := strconv.Atoi(stringToken[0])
 
 	if uint64(authuid) != uid {
-		return database.ErrorNotAuthorized
+		return database.ErrNotAuthorized
 	}
 	return nil
 }
