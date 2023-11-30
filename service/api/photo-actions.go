@@ -32,8 +32,8 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.Id = photoid
 	photo.UserId = uid
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),photo.UserId)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), photo.UserId)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
@@ -43,11 +43,11 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	if errors.Is(err, database.ErrorPhotoDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
-	}else if err != nil{
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -75,15 +75,15 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.LikeCounter = 0
 	photo.CommentCounter = 0
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),photo.UserId)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), photo.UserId)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbphoto := photo.PhotoFromApiToDatabase()
 	photo.Id, err = rt.db.SetPhoto(dbphoto)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -103,15 +103,15 @@ func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprout
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	
-	err = CheckAuthentication(r.Header.Get("Authorization"),userid)
-	if errors.Is(err,database.ErrorNotAuthorized){
+
+	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	photos, err = rt.db.GetPhotos(userid)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

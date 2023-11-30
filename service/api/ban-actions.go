@@ -31,15 +31,15 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	ban.UserId = uid
 	ban.BannedUserId = banneduid
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),uid)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbBan := ban.BanFromApiToDatabase()
 	err = rt.db.SetBan(dbBan)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -82,8 +82,8 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 	ban.UserId = uid
 	ban.BannedUserId = banneduid
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),uid)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
@@ -93,13 +93,13 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 	if errors.Is(err, database.ErrorBanDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
-	}else if err!= nil{
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
-	
+
 }
 
 // Obtain the list of banned users
@@ -112,14 +112,14 @@ func (rt *_router) getBanList(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),uid)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	bannings, err = rt.db.GetBannings(uid)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -1,15 +1,15 @@
 package api
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
-	"encoding/json"
 	"time"
-	"errors"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
-	"github.com/julienschmidt/httprouter"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
+	"github.com/julienschmidt/httprouter"
 )
 
 // Delete comment from a photo
@@ -18,13 +18,13 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 	var commentid uint64
 	var userid uint64
 
-	photoid, err := strconv.ParseUint(ps.ByName("photoid"),10,64)
+	photoid, err := strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	commentid, err = strconv.ParseUint(ps.ByName("commentid"),10,64)
+	commentid, err = strconv.ParseUint(ps.ByName("commentid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -34,33 +34,32 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 	comment.Id = commentid
 
 	userid, err = rt.db.ObtainCommentUserId(commentid)
-	if errors.Is(err,database.ErrorCommentDoesNotExist){
+	if errors.Is(err, database.ErrorCommentDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	}else if err != nil{
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),userid)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbcomment := comment.CommentFromApiToDatabase()
 	err = rt.db.RemoveComment(dbcomment)
-	if errors.Is(err, database.ErrorCommentDoesNotExist){
+	if errors.Is(err, database.ErrorCommentDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
-	}else if err!= nil{
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-
 	w.WriteHeader(http.StatusNoContent)
-	
+
 }
 
 // Add a comment to a photo
@@ -76,7 +75,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	comment.PhotoId, err = strconv.ParseUint(ps.ByName("photoid"),10,64)
+	comment.PhotoId, err = strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -84,22 +83,22 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	comment.Date = currentTime.Format("2006-01-02 15:04:05")
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),comment.UserId)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), comment.UserId)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbcomment := comment.CommentFromApiToDatabase()
-	comment.Id,err = rt.db.SetComment(dbcomment)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
+	comment.Id, err = rt.db.SetComment(dbcomment)
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_=json.NewEncoder(w).Encode(comment)
+	_ = json.NewEncoder(w).Encode(comment)
 
 }
 
@@ -107,7 +106,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var comments []database.Comment
 
-	photoid, err := strconv.ParseUint(ps.ByName("photoid"),10,64)
+	photoid, err := strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -119,14 +118,14 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),userid)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	comments, err = rt.db.GetComments(photoid)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

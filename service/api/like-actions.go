@@ -39,15 +39,15 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	like.OwnerId = uid
 	like.PhotoId = photoid
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),like.UserId)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), like.UserId)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	dbLike := like.LikeFromApiToDatabase()
 	err = rt.db.SetLike(dbLike)
-	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist){
+	if err != nil && !errors.Is(err, database.ErrorElementIsAlreadyExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -86,8 +86,8 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	like.OwnerId = uid
 	like.PhotoId = photoid
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),like.UserId)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), like.UserId)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
@@ -97,7 +97,7 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	if errors.Is(err, database.ErrorLikeDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
-	}else if err != nil{
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -123,14 +123,14 @@ func (rt *_router) getLikes(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	err = CheckAuthentication(r.Header.Get("Authorization"),uid)
-	if errors.Is(err,database.ErrorNotAuthorized){
+	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
+	if errors.Is(err, database.ErrorNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	likes, err = rt.db.GetLikes(photoid)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -44,33 +44,33 @@ type AppDatabase interface {
 
 	SetFollow(Follow) error
 	RemoveFollow(Follow) error
-	GetFollowings(uint64)([]string, error)
+	GetFollowings(uint64) ([]string, error)
 
 	SetLike(Like) error
 	RemoveLike(Like) error
-	RemoveLikes(Ban)error
-	GetLikes(uint64)([]string,error)
+	RemoveLikes(Ban) error
+	GetLikes(uint64) ([]string, error)
 
 	SetPhoto(Photo) (uint64, error)
 	RemovePhoto(Photo) error
-	GetPhotos(uint64)([]Photo,error)
+	GetPhotos(uint64) ([]Photo, error)
 
-	SetUser(User) (uint64,error)
-	CheckUsername(string)(uint64,error)
-	SetUsername(User)error
-	GetStream(uint64)([]Photo, error)
-	GetUsernameById(uint64)(string, error)
-	GetProfile(uint64)(uint64,uint64,uint64,error)
+	SetUser(User) (uint64, error)
+	CheckUsername(string) (uint64, error)
+	SetUsername(User) error
+	GetStream(uint64) ([]Photo, error)
+	GetUsernameById(uint64) (string, error)
+	GetProfile(uint64) (uint64, uint64, uint64, error)
 
 	RemoveComment(Comment) error
-	SetComment(Comment) (uint64,error)
+	SetComment(Comment) (uint64, error)
 	ObtainCommentUserId(uint64) (uint64, error)
-	RemoveComments(Ban)error
-	GetComments(uint64)([]Comment, error)
+	RemoveComments(Ban) error
+	GetComments(uint64) ([]Comment, error)
 
-	SetBan(Ban)error
-	RemoveBan(Ban)error
-	GetBannings(uint64)([]string,error)
+	SetBan(Ban) error
+	RemoveBan(Ban) error
+	GetBannings(uint64) ([]string, error)
 
 	Ping() error
 }
@@ -86,7 +86,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
 
-	_,err := db.Exec("PRAGMA foreign_key = ON")
+	_, err := db.Exec("PRAGMA foreign_key = ON")
 	if err != nil {
 		return nil, err
 	}
