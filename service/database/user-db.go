@@ -75,8 +75,8 @@ func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error) {
 	}
 
 	if err := rows.Err(); err != nil {
-        return nil, err
-    }
+		return nil, err
+	}
 
 	_ = rows.Close()
 

@@ -63,8 +63,8 @@ func (db *appdbimpl) GetFollowings(userid uint64) ([]string, error) {
 	}
 
 	if err := rows.Err(); err != nil {
-        return nil, err
-    }
+		return nil, err
+	}
 
 	_ = rows.Close()
 
