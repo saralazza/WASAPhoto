@@ -17,8 +17,8 @@ export default {}
 	</header>
 
 	<div class="container-fluid">
-		<div class="row">
-			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+		<div class="row justify-content-center align-items-center">
+			<main>
 				<RouterView />
 			</main>
 		</div>

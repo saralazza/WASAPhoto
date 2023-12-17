@@ -39,12 +39,16 @@ export default {
 </script>
 
 <template>
-  <div class="d-flex flex-column justify-content-center align-items-center min-vh-1 min-vh-100">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+  <div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
       <h1 class="h1 mx-auto my-4 font-weight-bold costum-color">WASAPhoto</h1>
     </div>
 
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+      <img src="../../image/userIconPhoto.jpeg" style="width: 250px; height: auto;">
+    </div>
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3">
       <input type="text" id="username" v-model="username" class="form-control-login" placeholder="  Insert here your username">
       <div class="input-group-append">
         <button class="btn custom-btn rounded-5 btn-success" type="button" @click="doLogin">Login</button>
