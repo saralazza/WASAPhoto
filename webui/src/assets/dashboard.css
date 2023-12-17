@@ -25,7 +25,7 @@ body {
 	left: 0;
 	z-index: 100; /* Behind the navbar */
 	padding: 48px 0 0; /* Height of navbar */
-	box-shadow: inset -1px 0 0 rgba(0 0 0 / 10%);
+	box-shadow: inset -1px 0 0 rgba(255 255 255 / 10%);
 }
 
 @media (max-width: 767.98px) {
@@ -67,11 +67,92 @@ body {
  * Navbar
  */
 
+ body {
+	font-size: 0.875rem;
+}
+
+.feather {
+	width: 16px;
+	height: 16px;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+	position: fixed;
+	top: 0;
+
+	/* rtl:raw:
+	right: 0;
+	*/
+	bottom: 0;
+
+	/* rtl:remove */
+
+	left: 0;
+	z-index: 100; /* Behind the navbar */
+	padding: 48px 0 0; /* Height of navbar */
+	box-shadow: inset -1px 0 0 rgba(255 255 255 / 10%);
+}
+
+@media (max-width: 767.98px) {
+	.sidebar {
+		top: 5rem;
+	}
+}
+
+.sidebar-sticky {
+	height: calc(100vh - 48px);
+	overflow-x: hidden;
+	overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar .nav-link {
+	font-weight: 500;
+	color: #333;
+}
+
+.sidebar .nav-link .feather {
+	margin-right: 4px;
+	color: #727272;
+}
+
+.sidebar .nav-link.active, .sidebar .router-link-active {
+	color: #2470dc;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+	color: inherit;
+}
+
+.sidebar-heading {
+	font-size: 0.75rem;
+}
+
+/*
+ * Navbar
+ */
+
+ .navbar-costum{
+	background-color: #023047;
+  	color: #FFFFFF;
+ }
+
 .navbar-brand {
 	padding-top: 0.75rem;
 	padding-bottom: 0.75rem;
-	background-color: rgba(0 0 0 / 25%);
-	box-shadow: inset -1px 0 0 rgba(0 0 0 / 25%);
+	background-color: rgba(0, 15, 22, 0.25);
+	box-shadow: inset -1px 0 0 rgba(0 15 22 / 25%);
+	color:rgba(255 255 255);
+	font-weight: bold;
+	width: 150px;
+}
+
+.navbar-brand:hover {
+	color: rgba(255, 255, 255, 0.295); 
 }
 
 .navbar .navbar-toggler {
@@ -83,13 +164,34 @@ body {
 	padding: 0.75rem 1rem;
 }
 
-.form-control-dark {
-	color: #fff;
-	background-color: rgba(255 255 255 / 10%);
-	border-color: rgba(255 255 255 / 10%);
+.form-control-login{
+	color: #023047;
+	width: 580px;
+	height: 35px;
+	background-color: #e6e1e1fb;
+	border: 3px solid #023047;
+  	border-radius: 20px;
+
 }
 
-.form-control-dark:focus {
-	border-color: transparent;
-	box-shadow: 0 0 0 3px rgba(255 255 255 / 25%);
+.form-control-login:focus {
+	border-color: 3px solid #023047;
+	outline: none;
+}
+
+.costum-color{
+	color: #FB8500;
+	font-size: 100px;
+}
+
+
+.custom-btn {
+    background-color: #023047;
+    color: #ffffff;
+	margin-left: 6px; 
+}
+
+.custom-btn:hover{
+	background-color: #023047;
+	color: rgba(255, 255, 255, 0.295);
 }
