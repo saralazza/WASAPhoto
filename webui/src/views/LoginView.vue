@@ -22,7 +22,8 @@ export default {
 					let response = await this.$axios.post("/session", { username: this.username })
 					this.user = response.data
 					localStorage.setItem("token",this.user.id)
-					this.$router.push({path: '/session'})
+					localStorage.setItem("username",this.user.username)
+					this.$router.push({path: '/user/'+this.user.id+'/stream'})
 				}catch(e){
 					if (e.response && e.response.status === 400) {
                         this.errormsg = "Form error, please check all fields and try again";

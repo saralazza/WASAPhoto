@@ -27,9 +27,9 @@ export default {
 			localStorage.removeItem("username")
 			this.$router.push({path: '/'})
 		},
-		async switchToProfile(){
-			this.$router.push({path: '/user/'+this.token+'/profile'})
-		}
+        async switchToStream(){
+            this.$router.push({path: '/user/'+this.token+'/stream'})
+        }
 	},
 }
 </script>
@@ -40,9 +40,9 @@ export default {
 			<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
 				<div class="position-sticky pt-3 sidebar-sticky">
 					<ul class="nav flex-column">
-						<li class="nav-item border-bottom" style="color:#023047; font-size: 25px;" @click="switchToProfile" >
-							My Profile
-						</li>
+                        <li class="nav-item border-bottom" style="color:#023047; font-size: 25px; " @click="switchToStream" >
+                            My Stream
+                        </li>
 					</ul>
 				</div>
 			</nav>
@@ -51,7 +51,7 @@ export default {
 				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 					<div class="d-flex align-items-left">
 						<img src="../../image/userIconPhoto.jpeg" style="width: 60px; height: auto;">
-						<h1 class="h2 pt-3" style="color: #FB8500;">My Stream</h1>
+						<h1 class="h2 pt-3" style="color: #FB8500;">My Profile</h1>
 					</div>
 					<div class="btn-toolbar mb-2 mb-md-0 pt-3">
 						<h1 class="h2" style="color: #FB8500;">{{ this.username }}</h1>
