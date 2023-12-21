@@ -565,10 +565,9 @@ components:
         url:
           description: Photo url
           type: string
-          example: "http://photo/wasa.com"
-          maxLength: 100
+          format: binary
+          maxLength: 9999
           minLength: 0
-          pattern: '^.*?$'
         date:
           description: Upload date
           type: string

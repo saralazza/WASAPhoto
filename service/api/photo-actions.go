@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -54,19 +55,18 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 // Upload a photo
 func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var photo Photo
-	var uid uint64
 
 	currentTime := time.Now()
 
-	err := json.NewDecoder(r.Body).Decode(&photo)
+	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	uid, err = strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	photo.Url, err = io.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

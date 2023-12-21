@@ -36,7 +36,7 @@ type Follow struct {
 
 type Photo struct {
 	Id             uint64 `json:"photoId"`
-	Url            string `json:"url"`
+	Url            []byte `json:"url"`
 	Date           string `json:"date"`
 	LikeCounter    uint64 `json:"likeCounter"`
 	CommentCounter uint64 `json:"commentCounter"`
