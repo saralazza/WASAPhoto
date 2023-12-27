@@ -25,6 +25,25 @@ export default {
 			},
 			imagePreviewUrl:null,
 			images:null,
+			photos:[
+				{
+					id: 0,
+					url: '',
+					date: '',
+					likeCounter: 0,
+					commentCounter: 0,
+					userId: 0,
+				}
+			],
+			p: {
+					id: 0,
+					url: '',
+					date: '',
+					likeCounter: 0,
+					commentCounter: 0,
+					userId: 0,
+				},
+			
 		}
 	},
 	methods: {
@@ -36,6 +55,31 @@ export default {
         async switchToStream(){
             this.$router.push({path: '/user/'+this.token+'/stream'})
         },
+		async getUserPhotos(){
+			try{
+				let response = await this.$axios.get('/user/'+this.token+'/photo',
+					{
+						headers: {
+							Authorization: "Bearer " + this.token }
+					}
+				)
+				this.photos = response.data
+				for (let i = 0; i < this.photos.length; i++) {
+					this.photos[i].url =  'data:image/*;base64,' + this.photos[i].url 
+					console.log(this.photos[i].url)
+                }
+			}catch (e) {
+                if (e.response && e.response.status === 400) {
+                    this.errormsg = "Input error, please check all fields and try again";
+                } else if (e.response && e.response.status === 500) {
+                    this.errormsg = "Server error, please try again later";
+                } else if(e.response && e.response.status === 401){
+					this.errormsg = "You are not authorized";
+				}else{
+					this.errormsg = e.toString();
+				}
+            }
+		},
 		/*async getProfile(){
 			try{
 				let response = await this.$axios.get("/user/"+ this.token +"/profile",
@@ -65,11 +109,15 @@ export default {
 				this.errormsg = "Please select a file to upload."
 			} else {
 				try {
+					console.log("lucian")
 					let response = await this.$axios.post("/user/" + this.token + "/photo" , this.images, {
 						headers: {
 							Authorization: "Bearer " + this.token
 						}
 					})
+					this.p = response.data
+					console.log(response)
+					console.log("ciao")
 					this.successmsg = "Photo uploaded successfully."
 				} catch (e) {
 					if (e.response && e.response.status === 400) {
@@ -87,7 +135,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.getProfile()
+		this.getUserPhotos()
 	}
 }
 </script>
@@ -146,6 +194,23 @@ export default {
 				</div>
 				<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 			</main>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4" v-for="photo in this.photos" :key="photo.id">
+			<div class="card mb-4 shadow-sm">
+				<img class="card-img-top" :src=photo.url alt="Card image cap">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center">
+                        <p class="card-text">Likes : {{ photo.likeCounter }}</p>
+                    </div>
+					<div class="d-flex justify-content-between align-items-center">
+                        <p class="card-text">Likes : {{ photo.commentCounter }}</p>
+                    </div>
+					<p class="card-text">Photo uploaded on {{ photo.date }}</p>
+
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
