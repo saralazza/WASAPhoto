@@ -31,9 +31,16 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	photo.Id = photoid
-	photo.UserId = uid
+	photo.Username, err = rt.db.GetUsernameById(uid)
+	if errors.Is(err,database.ErrUserDoesNotExist){
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	err = CheckAuthentication(r.Header.Get("Authorization"), photo.UserId)
+	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
 	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -70,12 +77,20 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	photo.UserId = uid
+	photo.Username, err = rt.db.GetUsernameById(uid)
+	if errors.Is(err,database.ErrUserDoesNotExist){
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	photo.Date = currentTime.Format("2006-01-02 15:04:05")
 	photo.LikeCounter = 0
 	photo.CommentCounter = 0
 
-	err = CheckAuthentication(r.Header.Get("Authorization"), photo.UserId)
+	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
 	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -97,10 +112,20 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 // Get the list of photos of an user
 func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var photos []database.Photo
+	var username string
 
 	userid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	username, err = rt.db.GetUsernameById(userid)
+	if errors.Is(err,database.ErrUserDoesNotExist){
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -110,7 +135,7 @@ func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	photos, err = rt.db.GetPhotos(userid)
+	photos, err = rt.db.GetPhotos(username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

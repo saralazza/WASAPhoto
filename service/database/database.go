@@ -53,7 +53,7 @@ type AppDatabase interface {
 
 	SetPhoto(Photo) (uint64, error)
 	RemovePhoto(Photo) error
-	GetPhotos(uint64) ([]Photo, error)
+	GetPhotos(string) ([]Photo, error)
 
 	SetUser(User) (uint64, error)
 	CheckUsername(string) (uint64, error)
@@ -100,9 +100,9 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
-	sqlStmt = `CREATE TABLE IF NOT EXISTS Photo (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, userid TEXT NOT NULL, 
+	sqlStmt = `CREATE TABLE IF NOT EXISTS Photo (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, 
 		date TEXT NOT NULL, url BLOB NOT NULL,
-		FOREIGN KEY (userid) REFERENCES User(id)
+		FOREIGN KEY (username) REFERENCES User(username)
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {

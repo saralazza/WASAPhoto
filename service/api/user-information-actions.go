@@ -103,7 +103,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 
-	profile.Photos, err = rt.db.GetPhotos(userid)
+	profile.Photos, err = rt.db.GetPhotos(profile.Username)
 	if errors.Is(err, database.ErrUserDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

@@ -11,7 +11,7 @@ export default {
 				name: '',
 				photos:[
 					{
-						id: 0,
+						photoId: 0,
 						url: '',
 						date: '',
 						likeCounter: 0,
@@ -32,17 +32,10 @@ export default {
 					date: '',
 					likeCounter: 0,
 					commentCounter: 0,
-					userId: 0,
+					username: '',
 				}
 			],
-			p: {
-					id: 0,
-					url: '',
-					date: '',
-					likeCounter: 0,
-					commentCounter: 0,
-					userId: 0,
-				},
+
 			
 		}
 	},
@@ -55,6 +48,20 @@ export default {
         async switchToStream(){
             this.$router.push({path: '/user/'+this.token+'/stream'})
         },
+
+		async switchToStream(){
+            try{
+				let response = await this.$axios.get('/user/'+this.token+'/photo',
+					{
+						headers: {
+							Authorization: "Bearer " + this.token }
+					}
+				)
+			}catch{
+
+			}
+        },
+
 		async getUserPhotos(){
 			try{
 				let response = await this.$axios.get('/user/'+this.token+'/photo',
@@ -63,11 +70,15 @@ export default {
 							Authorization: "Bearer " + this.token }
 					}
 				)
-				this.photos = response.data
-				for (let i = 0; i < this.photos.length; i++) {
-					this.photos[i].url =  'data:image/*;base64,' + this.photos[i].url 
-					console.log(this.photos[i].url)
-                }
+				if(response.status === 200){
+					this.photos = response.data
+					if(this.photos != null){
+						for (let i = 0; i < this.photos.length; i++) {
+							this.photos[i].url =  'data:image/*;base64,' + this.photos[i].url
+						}
+					}
+				}
+				
 			}catch (e) {
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Input error, please check all fields and try again";
@@ -80,27 +91,6 @@ export default {
 				}
             }
 		},
-		/*async getProfile(){
-			try{
-				let response = await this.$axios.get("/user/"+ this.token +"/profile",
-					{
-						headers: {
-							Authorization: "Bearer " + this.token }
-					}
-				)
-				this.profile = response.data
-			}catch(e){
-				if (e.response && e.response.status === 400) {
-					this.errormsg = "Input error, please check all fields and try again";
-				}else if(e.response && e.response.status === 500){
-					this.errormsg = "Server error, please try again later";
-				}else if(e.response && e.response.status === 401){
-					this.errormsg = "You are not authorized";
-				}else{
-					this.errormsg = e.toString();
-				}
-			}
-		},*/
 		async uploadPhoto(){
 			this.images = this.$refs.file.files[0]
 		},
@@ -109,15 +99,12 @@ export default {
 				this.errormsg = "Please select a file to upload."
 			} else {
 				try {
-					console.log("lucian")
 					let response = await this.$axios.post("/user/" + this.token + "/photo" , this.images, {
 						headers: {
 							Authorization: "Bearer " + this.token
 						}
 					})
 					this.p = response.data
-					console.log(response)
-					console.log("ciao")
 					this.successmsg = "Photo uploaded successfully."
 				} catch (e) {
 					if (e.response && e.response.status === 400) {
@@ -130,6 +117,26 @@ export default {
 						this.errormsg = e.toString();
 						this.detailedmsg = null;
 					}
+				}
+			}
+		},
+		async deletePhoto(photoid){
+			try{
+				let response = await this.$axios.delete("/user/" + this.token + "/photo/"+ photoid ,{
+						headers: {
+							Authorization: "Bearer " + this.token
+						}
+					})
+			}catch(e){
+				if (e.response && e.response.status === 400) {
+					this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+					this.detailedmsg = null;
+				} else if (e.response && e.response.status === 500) {
+					this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+					this.detailedmsg = e.toString();
+				} else {
+					this.errormsg = e.toString();
+					this.detailedmsg = null;
 				}
 			}
 		},
@@ -192,27 +199,48 @@ export default {
 						</div>
 					</div>
 				</div>
+
 				<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+
+				<div class="row">
+					<div class="col-md-4" v-for="photo in this.photos" :key="photo.id">
+						<div class="card mb-4 shadow-sm post">
+
+							<div class="d-flex justify-content-between align-items-center">
+								<p class="card-text"> {{ photo.username }}</p>
+							</div>
+							
+							<div class="container-image">
+								<img class="image" :src=photo.url alt="Card image cap">
+							</div>
+
+							<div class="btn-toolbar mb-2 mb-md-0 mt-2">
+								<div class="btn-group me-2">
+									<button type="button" class="btn custom-btn" @click="deletePhoto(photo.photoId)">Delete </button>
+								</div>
+							</div>
+
+
+							<div class="card-body">
+								<div class="d-flex justify-content-between align-items-center">
+									<p class="card-text">Likes : {{ photo.likeCounter }}</p>
+								</div>
+								<div class="d-flex justify-content-between align-items-center">
+									<p class="card-text">Comments : {{ photo.commentCounter }}</p>
+								</div>
+								<div class="d-flex justify-content-between align-items-center">
+									<p class="card-text">Date : {{ photo.date }}</p>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+				
 			</main>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-4" v-for="photo in this.photos" :key="photo.id">
-			<div class="card mb-4 shadow-sm">
-				<img class="card-img-top" :src=photo.url alt="Card image cap">
-				<div class="card-body">
-					<div class="d-flex justify-content-between align-items-center">
-                        <p class="card-text">Likes : {{ photo.likeCounter }}</p>
-                    </div>
-					<div class="d-flex justify-content-between align-items-center">
-                        <p class="card-text">Likes : {{ photo.commentCounter }}</p>
-                    </div>
-					<p class="card-text">Photo uploaded on {{ photo.date }}</p>
-
-				</div>
-			</div>
-		</div>
-	</div>
+	
 </template>
 
 <style>

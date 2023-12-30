@@ -8,7 +8,7 @@ import (
 )
 
 func (db *appdbimpl) SetPhoto(p Photo) (uint64, error) {
-	_, err := db.c.Exec(`INSERT INTO Photo (userid, date, url) VALUES (?, ?, ?)`, p.UserId, p.Date, p.Url)
+	_, err := db.c.Exec(`INSERT INTO Photo (username, date, url) VALUES (?, ?, ?)`, p.Username, p.Date, p.Url)
 	if err != nil {
 		var sqlErr sqlite3.Error
 		// Check if the tuple is already exist
@@ -21,7 +21,7 @@ func (db *appdbimpl) SetPhoto(p Photo) (uint64, error) {
 	}
 
 	var photoid uint64
-	err = db.c.QueryRow(`SELECT id FROM Photo WHERE userid=? AND date=? AND url=?`, p.UserId, p.Date, p.Url).Scan(&photoid)
+	err = db.c.QueryRow(`SELECT id FROM Photo WHERE username=? AND date=? AND url=?`, p.Username, p.Date, p.Url).Scan(&photoid)
 	if errors.Is(err, sql.ErrNoRows) {
 		return 0, ErrPhotoDoesNotExist
 	} else if err != nil {
@@ -46,10 +46,10 @@ func (db *appdbimpl) RemovePhoto(p Photo) error {
 	return err
 }
 
-func (db *appdbimpl) GetPhotos(userid uint64) ([]Photo, error) {
+func (db *appdbimpl) GetPhotos(username string) ([]Photo, error) {
 	var photos []Photo
 
-	rows, err := db.c.Query(`SELECT * FROM Photo WHERE userid=? ORDER BY date DESC`, userid)
+	rows, err := db.c.Query(`SELECT * FROM Photo WHERE username=? ORDER BY date DESC`, username)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (db *appdbimpl) GetPhotos(userid uint64) ([]Photo, error) {
 	for rows.Next() {
 		var photo Photo
 
-		err = rows.Scan(&photo.Id, &photo.UserId, &photo.Date, &photo.Url)
+		err = rows.Scan(&photo.Id, &photo.Username, &photo.Date, &photo.Url)
 		if err != nil {
 			return nil, err
 		}

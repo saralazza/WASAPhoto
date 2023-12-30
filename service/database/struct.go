@@ -40,7 +40,7 @@ type Photo struct {
 	Date           string `json:"date"`
 	LikeCounter    uint64 `json:"likeCounter"`
 	CommentCounter uint64 `json:"commentCounter"`
-	UserId         uint64 `json:"userId"`
+	Username       string `json:"username"`
 }
 
 type Comment struct {

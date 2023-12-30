@@ -50,7 +50,7 @@ func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error) {
 			return nil, err
 		}
 
-		err = db.c.QueryRow(`SELECT userid FROM Photo WHERE id =?`, photo.Id).Scan(&photo.UserId)
+		err = db.c.QueryRow(`SELECT username FROM Photo WHERE id =?`, photo.Id).Scan(&photo.Username)
 		if err != nil {
 			return nil, err
 		} else if errors.Is(err, sql.ErrNoRows) {

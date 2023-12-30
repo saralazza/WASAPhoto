@@ -105,7 +105,7 @@ type Photo struct {
 	Date           string `json:"date"`
 	LikeCounter    uint64 `json:"likeCounter"`
 	CommentCounter uint64 `json:"commentCounter"`
-	UserId         uint64 `json:"userId"`
+	Username       string `json:"username"`
 }
 
 func PhotoFromDatabaseToApi(photo database.Photo) Photo {
@@ -115,7 +115,7 @@ func PhotoFromDatabaseToApi(photo database.Photo) Photo {
 		Date:           photo.Date,
 		LikeCounter:    photo.LikeCounter,
 		CommentCounter: photo.CommentCounter,
-		UserId:         photo.UserId,
+		Username:       photo.Username,
 	}
 
 	return p
@@ -128,7 +128,7 @@ func (p *Photo) PhotoFromApiToDatabase() database.Photo {
 		Date:           p.Date,
 		LikeCounter:    p.LikeCounter,
 		CommentCounter: p.CommentCounter,
-		UserId:         p.UserId,
+		Username:       p.Username,
 	}
 
 	return photo
