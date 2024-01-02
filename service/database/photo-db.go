@@ -8,7 +8,7 @@ import (
 )
 
 func (db *appdbimpl) SetPhoto(p Photo) (uint64, error) {
-	_, err := db.c.Exec(`INSERT INTO Photo (username, date, url) VALUES (?, ?, ?)`, p.Username, p.Date, p.Url)
+	_, err := db.c.Exec(`INSERT INTO Photo (username, date, url, uid) VALUES (?, ?, ?, ?)`, p.Username, p.Date, p.Url, p.UserId)
 	if err != nil {
 		var sqlErr sqlite3.Error
 		// Check if the tuple is already exist
@@ -57,7 +57,7 @@ func (db *appdbimpl) GetPhotos(username string) ([]Photo, error) {
 	for rows.Next() {
 		var photo Photo
 
-		err = rows.Scan(&photo.Id, &photo.Username, &photo.Date, &photo.Url)
+		err = rows.Scan(&photo.Id, &photo.Username, &photo.Date, &photo.Url, &photo.UserId)
 		if err != nil {
 			return nil, err
 		}

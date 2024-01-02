@@ -101,8 +101,9 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 
 	sqlStmt = `CREATE TABLE IF NOT EXISTS Photo (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, 
-		date TEXT NOT NULL, url BLOB NOT NULL,
+		date TEXT NOT NULL, url BLOB NOT NULL, uid INTEGER NOT NULL,
 		FOREIGN KEY (username) REFERENCES User(username)
+		FOREIGN KEY (uid) REFERENCES User(id)
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {

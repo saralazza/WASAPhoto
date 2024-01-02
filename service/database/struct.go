@@ -41,6 +41,7 @@ type Photo struct {
 	LikeCounter    uint64 `json:"likeCounter"`
 	CommentCounter uint64 `json:"commentCounter"`
 	Username       string `json:"username"`
+	UserId         uint64 `json:"userId"`
 }
 
 type Comment struct {

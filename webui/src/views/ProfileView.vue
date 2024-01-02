@@ -33,8 +33,18 @@ export default {
 					likeCounter: 0,
 					commentCounter: 0,
 					username: '',
+					userId: 0,
 				}
 			],
+			photo: {
+					id: 0,
+					url: '',
+					date: '',
+					likeCounter: 0,
+					commentCounter: 0,
+					username: '',
+					userId: 0,
+			},
 
 			
 		}
@@ -140,6 +150,60 @@ export default {
 				}
 			}
 		},
+		async likePhoto(photoid, userid){
+			try{
+				let response = await this.$axios.put('/user/'+userid+'/photo/'+photoid+'/likes/'+this.token ,{},{
+						headers: {
+							Authorization: "Bearer " + this.token
+						}
+					})
+				if(response.status === 200){
+					var like = response.data
+					this.photo = this.photos.filter(photo =>{
+						return photo.photoId == photoid
+					})[0];
+					this.photo.likeCounter+=1
+				}
+			}catch(e){
+				if (e.response && e.response.status === 400) {
+					this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+					this.detailedmsg = null;
+				} else if (e.response && e.response.status === 500) {
+					this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+					this.detailedmsg = e.toString();
+				} else {
+					this.errormsg = e.toString();
+					this.detailedmsg = null;
+				}
+			}
+		},
+		async unlikePhoto(photoid, userid){
+			try{
+				let response = await this.$axios.delete('/user/'+userid+'/photo/'+photoid+'/likes/'+this.token,{
+						headers: {
+							Authorization: "Bearer " + this.token
+						}
+					})
+				if(response.status === 200){
+					var like = response.data
+					this.photo = this.photos.filter(photo =>{
+						return photo.photoId == photoid
+					})[0];
+					this.photo.likeCounter-=1
+				}
+			}catch(e){
+				if (e.response && e.response.status === 400) {
+					this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+					this.detailedmsg = null;
+				} else if (e.response && e.response.status === 500) {
+					this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+					this.detailedmsg = e.toString();
+				} else {
+					this.errormsg = e.toString();
+					this.detailedmsg = null;
+				}
+			}
+		}
 	},
 	mounted() {
 		this.getUserPhotos()
@@ -214,16 +278,25 @@ export default {
 								<img class="image" :src=photo.url alt="Card image cap">
 							</div>
 
-							<div class="btn-toolbar mb-2 mb-md-0 mt-2">
+							<div class="d-flex justify-content-between align-items-center btn-toolbar mb-2 mb-md-0 mt-2">
 								<div class="btn-group me-2">
-									<button type="button" class="btn custom-btn" @click="deletePhoto(photo.photoId)">Delete </button>
+									<button type="button" class="btn custom-btn" @click="deletePhoto(photo.photoId)">Delete</button>
 								</div>
+
+								<div class="btn-group me-2">
+									<button type="button" class="btn custom-btn" @click="likePhoto(photo.photoId, photo.userId)">Like</button>
+								</div>
+
+								<div class="btn-group me-2">
+									<button type="button" class="btn custom-btn" @click="unlikePhoto(photo.photoId, photo.userId)">Dislike</button>
+								</div>
+
 							</div>
 
 
 							<div class="card-body">
 								<div class="d-flex justify-content-between align-items-center">
-									<p class="card-text">Likes : {{ photo.likeCounter }}</p>
+									<p class="card-text" >Likes : {{ photo.likeCounter }}</p>
 								</div>
 								<div class="d-flex justify-content-between align-items-center">
 									<p class="card-text">Comments : {{ photo.commentCounter }}</p>

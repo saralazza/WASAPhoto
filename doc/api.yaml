@@ -585,10 +585,15 @@ components:
           type: integer
           minimum: 0
           example: 2
+        username:
+          description: User username
+          type: string
+          example: Maria
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
         userid:
-          description: User identifier
-          type: integer
-          example: 1
+          {$ref: '#/components/schemas/User/properties/id'}
     Comment:
       title: Comment
       description: Comment schema composed by the content of the comment, an id and the user id

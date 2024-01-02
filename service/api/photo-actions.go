@@ -32,10 +32,10 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	photo.Id = photoid
 	photo.Username, err = rt.db.GetUsernameById(uid)
-	if errors.Is(err,database.ErrUserDoesNotExist){
+	if errors.Is(err, database.ErrUserDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	}else if err != nil {
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -78,10 +78,10 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	photo.Username, err = rt.db.GetUsernameById(uid)
-	if errors.Is(err,database.ErrUserDoesNotExist){
+	if errors.Is(err, database.ErrUserDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	}else if err != nil {
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -89,6 +89,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.Date = currentTime.Format("2006-01-02 15:04:05")
 	photo.LikeCounter = 0
 	photo.CommentCounter = 0
+	photo.UserId = uid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
 	if errors.Is(err, database.ErrNotAuthorized) {
@@ -121,10 +122,10 @@ func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	username, err = rt.db.GetUsernameById(userid)
-	if errors.Is(err,database.ErrUserDoesNotExist){
+	if errors.Is(err, database.ErrUserDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	}else if err != nil {
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
