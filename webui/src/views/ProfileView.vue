@@ -8,20 +8,10 @@ export default {
 			username: localStorage.getItem('username'),
 			token: localStorage.getItem('token'),
 			profile:{
-				name: '',
-				photos:[
-					{
-						photoId: 0,
-						url: '',
-						date: '',
-						likeCounter: 0,
-						commentCounter: 0,
-						userId: 0,
-					}
-				],
+				username: '',
 				photoCounter: 0,
-				followersCounter: 0,
-				followingsCounter: 0,
+				followerCounter: 0,
+				followingCounter: 0,
 			},
 			imagePreviewUrl:null,
 			images:null,
@@ -34,6 +24,15 @@ export default {
 					commentCounter: 0,
 					username: '',
 					userId: 0,
+					comments:[
+						{
+							text: '',
+							id: 0,
+							iserId: 0,
+							photoId: 0,
+							date: '',
+						}
+					],
 				}
 			],
 			photo: {
@@ -45,6 +44,8 @@ export default {
 					username: '',
 					userId: 0,
 			},
+			new_comment:'',
+
 
 			
 		}
@@ -57,19 +58,6 @@ export default {
 		},
         async switchToStream(){
             this.$router.push({path: '/user/'+this.token+'/stream'})
-        },
-
-		async switchToStream(){
-            try{
-				let response = await this.$axios.get('/user/'+this.token+'/photo',
-					{
-						headers: {
-							Authorization: "Bearer " + this.token }
-					}
-				)
-			}catch{
-
-			}
         },
 
 		async getUserPhotos(){
@@ -85,6 +73,28 @@ export default {
 					if(this.photos != null){
 						for (let i = 0; i < this.photos.length; i++) {
 							this.photos[i].url =  'data:image/*;base64,' + this.photos[i].url
+							try{
+								console.log(this.photos[i].userId)
+								console.log(this.photos[i].photoId)
+								let responseComment = await this.$axios.get('/user/'+this.photos[i].userId+'/photo/'+this.photos[i].photoId+'/comments',
+									{
+										headers: {
+											Authorization: "Bearer " + this.token }
+									}
+								)
+								this.photos[i].comments = responseComment.data
+								console.log(this.photos[i].comments)
+							}catch(e){
+								if (e.response && e.response.status === 400) {
+									this.errormsg = "Input error, please check all fields and try again";
+								} else if (e.response && e.response.status === 500) {
+									this.errormsg = "Server error, please try again later";
+								} else if(e.response && e.response.status === 401){
+									this.errormsg = "You are not authorized";
+								}else{
+									this.errormsg = e.toString();
+								}
+							}
 						}
 					}
 				}
@@ -118,14 +128,11 @@ export default {
 					this.successmsg = "Photo uploaded successfully."
 				} catch (e) {
 					if (e.response && e.response.status === 400) {
-						this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
-						this.detailedmsg = null;
-					} else if (e.response && e.response.status === 500) {
-						this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
-						this.detailedmsg = e.toString();
-					} else {
+                        this.errormsg = "Form error, please check all fields and try again";
+                    }else if(e.response && e.response.status === 500){
+						this.errormsg = "Server error, please try again later";
+					}else{
 						this.errormsg = e.toString();
-						this.detailedmsg = null;
 					}
 				}
 			}
@@ -139,14 +146,11 @@ export default {
 					})
 			}catch(e){
 				if (e.response && e.response.status === 400) {
-					this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
-					this.detailedmsg = null;
-				} else if (e.response && e.response.status === 500) {
-					this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
-					this.detailedmsg = e.toString();
-				} else {
+					this.errormsg = "Form error, please check all fields and try again";
+				}else if(e.response && e.response.status === 500){
+					this.errormsg = "Server error, please try again later";
+				}else{
 					this.errormsg = e.toString();
-					this.detailedmsg = null;
 				}
 			}
 		},
@@ -166,14 +170,11 @@ export default {
 				}
 			}catch(e){
 				if (e.response && e.response.status === 400) {
-					this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
-					this.detailedmsg = null;
-				} else if (e.response && e.response.status === 500) {
-					this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
-					this.detailedmsg = e.toString();
-				} else {
+					this.errormsg = "Form error, please check all fields and try again";
+				}else if(e.response && e.response.status === 500){
+					this.errormsg = "Server error, please try again later";
+				}else{
 					this.errormsg = e.toString();
-					this.detailedmsg = null;
 				}
 			}
 		},
@@ -184,7 +185,7 @@ export default {
 							Authorization: "Bearer " + this.token
 						}
 					})
-				if(response.status === 200){
+				if(response.status === 204){
 					var like = response.data
 					this.photo = this.photos.filter(photo =>{
 						return photo.photoId == photoid
@@ -193,20 +194,71 @@ export default {
 				}
 			}catch(e){
 				if (e.response && e.response.status === 400) {
-					this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
-					this.detailedmsg = null;
-				} else if (e.response && e.response.status === 500) {
-					this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
-					this.detailedmsg = e.toString();
-				} else {
+					this.errormsg = "Form error, please check all fields and try again";
+				}else if(e.response && e.response.status === 500){
+					this.errormsg = "Server error, please try again later";
+				}else{
 					this.errormsg = e.toString();
-					this.detailedmsg = null;
+				}
+			}
+		},
+		async getProfile(){
+			try{
+				let response = await this.$axios.get('/user/'+this.token+'/profile',
+					{
+						headers: {
+							Authorization: "Bearer " + this.token }
+					}
+				)
+				this.profile = response.data
+			}catch(e){
+				if (e.response && e.response.status === 400) {
+					this.errormsg = "Form error, please check all fields and try again";
+				}else if(e.response && e.response.status === 500){
+					this.errormsg = "Server error, please try again later";
+				}else{
+					this.errormsg = e.toString();
+				}
+			}
+		},
+		async sendComment(photoid, userid){
+			try{
+				let response = await this.$axios.post('/user/'+userid+'/photo/'+photoid+'/comments' , {text: this.new_comment, userId: parseInt(this.token)}, {
+						headers: {
+							Authorization: "Bearer " + this.token
+						}
+					})
+			}catch(e){
+				if (e.response && e.response.status === 400) {
+					this.errormsg = "Form error, please check all fields and try again";
+				}else if(e.response && e.response.status === 500){
+					this.errormsg = "Server error, please try again later";
+				}else{
+					this.errormsg = e.toString();
+				}
+			}
+		},
+		async deleteComment(photoid, userid, commentid){
+			try{
+				let response = await this.$axios.delete('/user/'+userid+'/photo/'+photoid+'/comments/'+commentid ,{
+						headers: {
+							Authorization: "Bearer " + this.token
+						}
+					})
+			}catch(e){
+				if (e.response && e.response.status === 400) {
+					this.errormsg = "Form error, please check all fields and try again";
+				}else if(e.response && e.response.status === 500){
+					this.errormsg = "Server error, please try again later";
+				}else{
+					this.errormsg = e.toString();
 				}
 			}
 		}
 	},
 	mounted() {
 		this.getUserPhotos()
+		this.getProfile()
 	}
 }
 </script>
@@ -247,12 +299,12 @@ export default {
 					</div>
 
 					<div class="d-flex flex-column justify-content-center align-items-center pt-3" style="height: 45px;" >
-						<p style="font-size: 18px">{{ this.profile.followersCounter }}</p>
+						<p style="font-size: 18px">{{ this.profile.followerCounter }}</p>
 						<p style="font-size: 18px">Followers</p>
 					</div>
 
 					<div class="d-flex flex-column justify-content-center align-items-center pt-3" style="height: 45px;" >
-						<p style="font-size: 18px">{{ this.profile.followingsCounter }}</p>
+						<p style="font-size: 18px">{{ this.profile.followingCounter }}</p>
 						<p style="font-size: 18px">Followings</p>
 					</div>
 
@@ -271,7 +323,7 @@ export default {
 						<div class="card mb-4 shadow-sm post">
 
 							<div class="d-flex justify-content-between align-items-center">
-								<p class="card-text"> {{ photo.username }}</p>
+								<p class="card-text" style="margin-left: 2px;"> {{ photo.username }}</p>
 							</div>
 							
 							<div class="container-image">
@@ -280,32 +332,47 @@ export default {
 
 							<div class="d-flex justify-content-between align-items-center btn-toolbar mb-2 mb-md-0 mt-2">
 								<div class="btn-group me-2">
-									<button type="button" class="btn custom-btn" @click="deletePhoto(photo.photoId)">Delete</button>
+									<button type="button" class="btn custom-btn rounded-5" style="width: 75px;" @click="deletePhoto(photo.photoId)">Delete</button>
 								</div>
 
 								<div class="btn-group me-2">
-									<button type="button" class="btn custom-btn" @click="likePhoto(photo.photoId, photo.userId)">Like</button>
+									<button type="button" class="btn custom-btn rounded-5" style="width: 60px;" @click="likePhoto(photo.photoId, photo.userId)">Like</button>
 								</div>
 
 								<div class="btn-group me-2">
-									<button type="button" class="btn custom-btn" @click="unlikePhoto(photo.photoId, photo.userId)">Dislike</button>
+									<button type="button" class="btn custom-btn rounded-5" style="width: 80px;" @click="unlikePhoto(photo.photoId, photo.userId)">Dislike</button>
 								</div>
 
 							</div>
 
+							<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1">
+								<input type="text" id="new_comment" v-model="new_comment" class="form-control-login" style="width: 220px; margin-left: 5px;" placeholder=" Insert here a comment">
+								<button class="btn custom-btn rounded-5 btn-success" type="button" style="margin-right: 5px;" @click="sendComment(photo.photoId, photo.userId)">Send</button>
+							</div>
 
 							<div class="card-body">
 								<div class="d-flex justify-content-between align-items-center">
 									<p class="card-text" >Likes : {{ photo.likeCounter }}</p>
 								</div>
 								<div class="d-flex justify-content-between align-items-center">
-									<p class="card-text">Comments : {{ photo.commentCounter }}</p>
-								</div>
-								<div class="d-flex justify-content-between align-items-center">
-									<p class="card-text">Date : {{ photo.date }}</p>
+									<p class="card-text mb-0" style="margin-right: 2px;">Comments : {{ photo.commentCounter }}</p>
 								</div>
 
 							</div>
+
+							<div class="mb-0" style="height: 200px; overflow-y: auto;">
+								<div class="row" style="flex-wrap: wrap;">
+									<div v-for="comment in photo.comments" :key="comment.id">
+
+										<div class="d-flex justify-content-between align-items-center" style='border-bottom: 1px solid #ccc;'>
+											<p class="card-text" style="margin-left: 2px;">{{ comment.text }}</p>
+											<button type="button" class="btn custom-btn rounded-5" style="width: 65px; height: 27px; font-size: 13px;" @click="deleteComment(photo.photoId, photo.userId, comment.id)">Delete</button>
+										</div>
+					
+									</div>
+								</div>
+							</div>
+
 						</div>
 					</div>
 				</div>

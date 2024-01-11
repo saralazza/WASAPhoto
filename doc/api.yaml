@@ -641,13 +641,6 @@ components:
       description: Profile schema composed by users' photos, user username, the number of photos, the number of followed users and the list of them, the number of following users and the list of them
       type: object
       properties:
-        photos:
-          description: The list of photos
-          type: array
-          items:
-            {$ref: '#/components/schemas/Photo'}
-          minItems: 0
-          maxItems: 1000
         username:
           {$ref: '#/components/schemas/User/properties/username'}
         photocounter:

@@ -96,7 +96,7 @@ func (db *appdbimpl) GetUsernameById(userid uint64) (string, error) {
 
 func (db *appdbimpl) GetProfile(userid uint64) (uint64, uint64, uint64, error) {
 	var photoCounter uint64
-	err := db.c.QueryRow(`SELECT COUNT(*) FROM Photo WHERE userid=?`, userid).Scan(&photoCounter)
+	err := db.c.QueryRow(`SELECT COUNT(*) FROM Photo WHERE uid=?`, userid).Scan(&photoCounter)
 	if err != nil {
 		return 0, 0, 0, err
 	} else if errors.Is(err, sql.ErrNoRows) {

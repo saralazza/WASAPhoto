@@ -62,6 +62,20 @@ func (db *appdbimpl) GetPhotos(username string) ([]Photo, error) {
 			return nil, err
 		}
 
+		err = db.c.QueryRow(`SELECT COUNT(*) FROM Like WHERE photoid=?`, photo.Id).Scan(&photo.LikeCounter)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrPhotoDoesNotExist
+		} else if err != nil {
+			return nil, err
+		}
+
+		err = db.c.QueryRow(`SELECT COUNT(*) FROM Comment WHERE photoid=?`, photo.Id).Scan(&photo.CommentCounter)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrPhotoDoesNotExist
+		} else if err != nil {
+			return nil, err
+		}
+
 		photos = append(photos, photo)
 	}
 
