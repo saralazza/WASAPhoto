@@ -53,7 +53,7 @@ type AppDatabase interface {
 
 	SetPhoto(Photo) (uint64, error)
 	RemovePhoto(Photo) error
-	GetPhotos(string) ([]Photo, error)
+	GetPhotos(uint64) ([]Photo, error)
 
 	SetUser(User) (uint64, error)
 	CheckUsername(string) (uint64, error)

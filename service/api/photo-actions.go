@@ -113,20 +113,10 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 // Get the list of photos of an user
 func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var photos []database.Photo
-	var username string
 
 	userid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	username, err = rt.db.GetUsernameById(userid)
-	if errors.Is(err, database.ErrUserDoesNotExist) {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	} else if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -136,7 +126,7 @@ func (rt *_router) getPhotos(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	photos, err = rt.db.GetPhotos(username)
+	photos, err = rt.db.GetPhotos(userid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

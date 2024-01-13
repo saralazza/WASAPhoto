@@ -46,10 +46,10 @@ func (db *appdbimpl) RemovePhoto(p Photo) error {
 	return err
 }
 
-func (db *appdbimpl) GetPhotos(username string) ([]Photo, error) {
+func (db *appdbimpl) GetPhotos(userId uint64) ([]Photo, error) {
 	var photos []Photo
 
-	rows, err := db.c.Query(`SELECT * FROM Photo WHERE username=? ORDER BY date DESC`, username)
+	rows, err := db.c.Query(`SELECT * FROM Photo WHERE uid=? ORDER BY date DESC`, userId)
 	if err != nil {
 		return nil, err
 	}

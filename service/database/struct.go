@@ -52,11 +52,6 @@ type Comment struct {
 	Date    string `json:"date"`
 }
 
-type Stream struct {
-	UserId uint64  `json:"userId"`
-	Photos []Photo `json:"photos"`
-}
-
 type Profile struct {
 	Username         string `json:"username"`
 	PhotoCounter     uint64 `json:"photoCounter"`

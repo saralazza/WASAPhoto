@@ -35,7 +35,7 @@ func (db *appdbimpl) SetUsername(u User) error {
 func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error) {
 	var ris []Photo
 
-	rows, err := db.c.Query(`SELECT id, url, date FROM Photo WHERE userid IN 
+	rows, err := db.c.Query(`SELECT id, url, date FROM Photo WHERE uid IN 
 		(SELECT followeduserid FROM Follow WHERE userid=? AND followeduserid NOT IN 
 		(SELECT userid FROM Ban WHERE banneduserid=?))`, userid, userid)
 	if err != nil {

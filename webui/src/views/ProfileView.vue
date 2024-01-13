@@ -13,7 +13,6 @@ export default {
 				followerCounter: 0,
 				followingCounter: 0,
 			},
-			imagePreviewUrl:null,
 			images:null,
 			photos:[
 				{
@@ -45,9 +44,6 @@ export default {
 					userId: 0,
 			},
 			new_comment:'',
-
-
-			
 		}
 	},
 	methods: {
@@ -74,8 +70,6 @@ export default {
 						for (let i = 0; i < this.photos.length; i++) {
 							this.photos[i].url =  'data:image/*;base64,' + this.photos[i].url
 							try{
-								console.log(this.photos[i].userId)
-								console.log(this.photos[i].photoId)
 								let responseComment = await this.$axios.get('/user/'+this.photos[i].userId+'/photo/'+this.photos[i].photoId+'/comments',
 									{
 										headers: {
@@ -83,7 +77,6 @@ export default {
 									}
 								)
 								this.photos[i].comments = responseComment.data
-								console.log(this.photos[i].comments)
 							}catch(e){
 								if (e.response && e.response.status === 400) {
 									this.errormsg = "Input error, please check all fields and try again";
@@ -254,6 +247,9 @@ export default {
 					this.errormsg = e.toString();
 				}
 			}
+		},
+		async switchToChangeUsername(){
+			this.$router.push({path: '/user/'+this.token+'/myusername'})
 		}
 	},
 	mounted() {
@@ -274,7 +270,7 @@ export default {
                         </li>
 					</ul>
 					<ul class="nav flex-column">
-						<li class="nav-item border-bottom" style="color:#023047; font-size: 25px;" @click="changeUsername" >
+						<li class="nav-item border-bottom" style="color:#023047; font-size: 25px;" @click="switchToChangeUsername" >
 							Change Username
 						</li>
 					</ul>

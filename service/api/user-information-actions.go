@@ -1,6 +1,7 @@
 package api
 
 import (
+
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 	"github.com/julienschmidt/httprouter"
@@ -51,14 +52,13 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 
 // Get the user stream composed by photos from following users
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	var stream database.Stream
+	var photos []database.Photo
 
 	userid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	stream.UserId = userid
 
 	err = CheckAuthentication(r.Header.Get("Authorization"), userid)
 	if errors.Is(err, database.ErrNotAuthorized) {
@@ -66,7 +66,7 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	stream.Photos, err = rt.db.GetStream(userid)
+	photos, err = rt.db.GetStream(userid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -74,7 +74,7 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(stream)
+	_ = json.NewEncoder(w).Encode(photos)
 
 }
 
