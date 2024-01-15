@@ -224,7 +224,7 @@ export default {
 								<img class="image" :src=photo.url alt="Card image cap">
 							</div>
 
-							<div class="d-flex justify-content-between align-items-center btn-toolbar mb-2 mb-md-0 mt-2">
+							<div class="d-flex justify-content-between align-items-center btn-toolbar mb-2 mb-md-0 mt-2 ms-auto">
 								<div class="btn-group me-2">
 									<button type="button" class="btn custom-btn rounded-5" style="width: 60px;" @click="likePhoto(photo.photoId, photo.userId)">Like</button>
 								</div>

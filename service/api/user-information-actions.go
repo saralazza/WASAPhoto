@@ -16,6 +16,7 @@ import (
 // Set username of the user
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
+	var username string
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -32,6 +33,23 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	err = CheckAuthentication(r.Header.Get("Authorization"), user.Id)
 	if errors.Is(err, database.ErrNotAuthorized) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	username, err = rt.db.GetUsernameById(user.Id)
+	if errors.Is(err, database.ErrUserDoesNotExist) {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if username == user.Username{
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

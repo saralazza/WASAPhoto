@@ -97,16 +97,18 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
+		fmt.Printf("user\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
 	sqlStmt = `CREATE TABLE IF NOT EXISTS Photo (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, 
 		date TEXT NOT NULL, url BLOB NOT NULL, uid INTEGER NOT NULL,
-		FOREIGN KEY (username) REFERENCES User(username)
-		FOREIGN KEY (uid) REFERENCES User(id)
+		FOREIGN KEY (username) REFERENCES User(username),
+		FOREIGN KEY (uid) REFERENCES User(id) 
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
+		fmt.Printf("photo\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -117,6 +119,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
+		fmt.Printf("like\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -127,6 +130,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
+		fmt.Printf("ban\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -137,6 +141,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
+		fmt.Printf("follow\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -147,6 +152,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
+		fmt.Printf("comment\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 

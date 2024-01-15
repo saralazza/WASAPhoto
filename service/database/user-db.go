@@ -6,20 +6,19 @@ import (
 )
 
 func (db *appdbimpl) SetUsername(u User) error {
-	ris, err := db.c.Exec(`SELECT * FROM User WHERE username=?`, u.Username)
+
+	ris, err := db.c.Exec(`UPDATE User SET username=? WHERE id=?`, u.Username, u.Id)
 	if err != nil {
 		return err
 	}
-	var check int64
-	check, err = ris.RowsAffected()
-
+	check, err := ris.RowsAffected()
 	if err != nil {
 		return err
-	} else if check != 0 {
-		return errors.New("Username must be unique")
+	} else if check == 0 {
+		return ErrUserDoesNotExist
 	}
 
-	ris, err = db.c.Exec(`UPDATE User SET username=? WHERE id=?`, u.Username, u.Id)
+	ris, err = db.c.Exec(`UPDATE Photo SET username=? WHERE uid=?`, u.Username, u.Id)
 	if err != nil {
 		return err
 	}
