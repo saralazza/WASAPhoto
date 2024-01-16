@@ -73,6 +73,27 @@ paths:
                     type: integer
                     example: 1
   
+  /user:
+    parameters:
+      - {$ref: "#/components/parameters/username"}
+    get:
+      security:
+      - bearerAuth: []
+      tags: ["userInformation"]
+      summary: search a set of users
+      description: Search users which username contains a substring specified into the path url
+      operationId: searchUsers
+      responses:
+        "200":
+          description: Users list returned successfully
+          content:
+            apllication/json:
+              schema:
+                {$ref: '#/components/schemas/UsersList'}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "500": {$ref: '#/components/responses/InternalServerError'}
+  
   /user/{uid}/ban/{banneduid}:
     parameters:
       - {$ref: "#/components/parameters/uid"}
@@ -459,6 +480,13 @@ components:
     InternalServerError:
       description: The server encountered an unexpected error
   parameters:
+    username:
+      name: username
+      description: Username of the user
+      in: query
+      required: true
+      schema:
+        {$ref: '#/components/schemas/User/properties/username'}
     uid:
       name: uid
       description: Id of the user
@@ -708,7 +736,6 @@ components:
           minItems: 0
           maxItems: 1000
 
-    
     CommentList:
       title: CommentList
       description: Comment list schema composed by comments of a photo
@@ -718,6 +745,18 @@ components:
           type: array
           items:
             {$ref: '#/components/schemas/Comment'}
+          minItems: 0
+          maxItems: 1000
+    
+    UsersList:
+      title: UsersList
+      description: Users list schema composed by users
+      properties:
+        users:
+          description: The list of users
+          type: array
+          items:
+            {$ref: '#/components/schemas/User'}
           minItems: 0
           maxItems: 1000
             
