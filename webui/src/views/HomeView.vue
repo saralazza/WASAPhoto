@@ -47,6 +47,9 @@ export default {
 		async switchToProfile(){
 			this.$router.push({path: '/user/'+this.token+'/profile'})
 		},
+		async switchToSearch(){
+			this.$router.push({path: '/user/'+this.token+'/search'})
+		},
 		async getStream(){
 			try{
 				let response = await this.$axios.get('/user/'+this.token+'/stream',
@@ -195,6 +198,11 @@ export default {
 						</li>
 					</ul>
 					<ul class="nav flex-column">
+						<li class="nav-item border-bottom" style="color:#023047; font-size: 25px;" @click="switchToSearch" >
+							Search
+						</li>
+					</ul>
+					<ul class="nav flex-column">
 						<li class="nav-item border-bottom" style="color:#023047; font-size: 25px;" @click="doLogout" >
 							Logout
 						</li>
@@ -217,7 +225,7 @@ export default {
 						<div class="card mb-4 shadow-sm post">
 
 							<div class="d-flex justify-content-between align-items-center">
-								<RouterLink :to="'/user/' + photo.username + '/userprofile'" class="nav-link">
+								<RouterLink :to="'/user/' + photo.userId + '/userprofile'" class="nav-link">
 									<p class="card-text" style="margin-left: 2px;"> {{ photo.username }}</p>
 								</RouterLink>
 							</div>
@@ -256,7 +264,7 @@ export default {
 								<div class="row" style="flex-wrap: wrap;">
 									<div v-for="comment in photo.comments" :key="comment.id">
 
-										<div class="d-flex justify-content-between align-items-center" style='border-bottom: 1px solid #ccc;'>
+										<div class="d-flex justify-content-between align-items-center" style='border-top: 1px solid #ccc;'>
 											<p class="card-text" style="margin-left: 2px;">{{ comment.text }}</p>
 											<button type="button" class="btn custom-btn rounded-5" style="width: 65px; height: 27px; font-size: 13px;" @click="deleteComment(photo.photoId, photo.userId, comment.id)">Delete</button>
 										</div>

@@ -61,6 +61,7 @@ type AppDatabase interface {
 	GetStream(uint64) ([]Photo, error)
 	GetUsernameById(uint64) (string, error)
 	GetProfile(uint64) (uint64, uint64, uint64, error)
+	SearchUsers(string) ([]User, error)
 
 	RemoveComment(Comment) error
 	SetComment(Comment) (uint64, error)

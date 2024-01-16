@@ -55,7 +55,9 @@ export default {
         async switchToStream(){
             this.$router.push({path: '/user/'+this.token+'/stream'})
         },
-
+		async switchToSearch(){
+			this.$router.push({path: '/user/'+this.token+'/search'})
+		},
 		async getUserPhotos(){
 			try{
 				let response = await this.$axios.get('/user/'+this.token+'/photo',
@@ -275,6 +277,11 @@ export default {
 						</li>
 					</ul>
 					<ul class="nav flex-column">
+						<li class="nav-item border-bottom" style="color:#023047; font-size: 25px;" @click="switchToSearch" >
+							Search
+						</li>
+					</ul>
+					<ul class="nav flex-column">
                         <li class="nav-item border-bottom" style="color:#023047; font-size: 25px; " @click="doLogout" >
                             Logout
                         </li>
@@ -360,7 +367,7 @@ export default {
 								<div class="row" style="flex-wrap: wrap;">
 									<div v-for="comment in photo.comments" :key="comment.id">
 
-										<div class="d-flex justify-content-between align-items-center" style='border-bottom: 1px solid #ccc;'>
+										<div class="d-flex justify-content-between align-items-center" style='border-top: 1px solid #ccc;'>
 											<p class="card-text" style="margin-left: 2px;">{{ comment.text }}</p>
 											<button type="button" class="btn custom-btn rounded-5" style="width: 65px; height: 27px; font-size: 13px;" @click="deleteComment(photo.photoId, photo.userId, comment.id)">Delete</button>
 										</div>

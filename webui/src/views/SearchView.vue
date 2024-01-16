@@ -6,11 +6,13 @@ export default {
 			loading: false,
 			username: localStorage.getItem('username'),
 			token: localStorage.getItem('token'),
-            user: {
-				id: 0,
-				username: "",
-			},
-            new_username: '',
+            substring: '',
+			users: [
+				{
+					id: 0,
+					username: "",
+				}
+			],
 		}
 	},
 	methods: {
@@ -25,29 +27,17 @@ export default {
         async switchToStream(){
             this.$router.push({path: '/user/'+this.token+'/stream'})
         },
-		async switchToSearch(){
-			this.$router.push({path: '/user/'+this.token+'/search'})
-		},
-        async changeUsername(){
-            if(this.username==""){
+        async SearchAnUser(){
+			if(this.substring==""){
 				this.errormsg = "Empty username is invalid"
 			}else{
 				try{
-                    console.log(this.token)
-                    console.log(this.username)
-					let response = await this.$axios.put('/user/'+this.token+'/myusername', { username: this.new_username }, {
-						headers: {
-							Authorization: "Bearer " + this.token
-						}
-					})
-					this.user = response.data
-					localStorage.setItem("token",this.user.id)
-					localStorage.setItem("username",this.user.username)
-                    this.$router.push({path: '/user/'+this.user.id+'/profile'})
+					let response = await this.$axios.get('/user?substring='+this.substring)
+					this.users = response.data
 				}catch(e){
 					if (e.response && e.response.status === 400) {
-                        this.errormsg = "Form error, please check all fields and try again";
-                    }else if(e.response && e.response.status === 500){
+						this.errormsg = "Form error, please check all fields and try again";
+					}else if(e.response && e.response.status === 500){
 						this.errormsg = "Server error, please try again later";
 					}else{
 						this.errormsg = e.toString();
@@ -75,11 +65,6 @@ export default {
 						</li>
 					</ul>
 					<ul class="nav flex-column">
-						<li class="nav-item border-bottom" style="color:#023047; font-size: 25px;" @click="switchToSearch" >
-							Search
-						</li>
-					</ul>
-					<ul class="nav flex-column">
 						<li class="nav-item border-bottom" style="color:#023047; font-size: 25px;" @click="doLogout" >
 							Logout
 						</li>
@@ -91,24 +76,36 @@ export default {
 				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 					<div class="d-flex align-items-left">
 						<img src="../../image/userIconPhoto.jpeg" style="width: 60px; height: auto;">
-						<h1 class="h2 pt-3" style="color: #FB8500;">{{ this.username }}, do you want change your username?</h1>
+						<h1 class="h2 pt-3" style="color: #FB8500;">{{ this.username }}, do you want search an user?</h1>
 					</div>
 				</div>
 
-                <div class="d-flex flex-column justify-content-center align-items-center">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                        <img src="../../image/userIconPhoto.jpeg" style="width: 250px; height: auto;">
-                    </div>
+                <div class="d-flex flex-column justify-content-center">
 
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3">
-                        <input type="text" id="new_username" v-model="new_username" class="form-control-login" placeholder="  Insert here your new username">
+                    <div class="d-flex flex-wrap flex-md-nowrap align-items-center">
+                        <input type="text" id="substring" v-model="substring" class="form-control-login" placeholder="  Search an user">
                         <div class="input-group-append">
-                            <button class="btn custom-btn rounded-5 btn-success" type="button" @click="changeUsername">Send</button>
+                            <button class="btn custom-btn rounded-5 btn-success" type="button" @click="SearchAnUser()">Send</button>
                         </div>
                     </div>
                 </div>
 
 				<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+
+				<div class="mb-0" style="height: 200px; overflow-y: auto;">
+					<div class="row" style="flex-wrap: wrap;">
+						<div v-for="user in this.users" :key="user.id">
+
+							<div class="d-flex justify-content-between align-items-center" style='border-top: 1px solid #ccc;'>
+								<RouterLink :to="'/user/' + user.id + '/userprofile'" class="nav-link">
+									<p class="card-text" style="margin-left: 2px;">{{ user.username }}</p>
+								</RouterLink>
+							</div>
+		
+						</div>
+					</div>
+				</div>
+
 			</main>
 		</div>
 	</div>

@@ -134,3 +134,23 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	_ = json.NewEncoder(w).Encode(profile)
 
 }
+
+// Search users which username contains a substring specified into the path url
+func (rt *_router) getUserBySubstring(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var users []database.User
+
+	substring := r.URL.Query().Get("substring")
+
+	users, err := rt.db.SearchUsers(substring)
+	if errors.Is(err, database.ErrUserDoesNotExist) {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(users)
+}

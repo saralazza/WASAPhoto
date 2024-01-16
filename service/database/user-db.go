@@ -34,7 +34,7 @@ func (db *appdbimpl) SetUsername(u User) error {
 func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error) {
 	var ris []Photo
 
-	rows, err := db.c.Query(`SELECT id, url, date FROM Photo WHERE uid IN 
+	rows, err := db.c.Query(`SELECT * FROM Photo WHERE uid IN 
 		(SELECT followeduserid FROM Follow WHERE userid=? AND followeduserid NOT IN 
 		(SELECT userid FROM Ban WHERE banneduserid=?))`, userid, userid)
 	if err != nil {
@@ -44,7 +44,7 @@ func (db *appdbimpl) GetStream(userid uint64) ([]Photo, error) {
 	for rows.Next() {
 		var photo Photo
 
-		err = rows.Scan(&photo.Id, &photo.Url, &photo.Date)
+		err = rows.Scan(&photo.Id, &photo.Username, &photo.Date, &photo.Url, &photo.UserId)
 		if err != nil {
 			return nil, err
 		}
@@ -119,4 +119,33 @@ func (db *appdbimpl) GetProfile(userid uint64) (uint64, uint64, uint64, error) {
 	}
 
 	return photoCounter, followerCounter, followingCounter, nil
+}
+
+func (db *appdbimpl) SearchUsers(substring string) ([]User, error) {
+	var users []User
+
+	rows, err := db.c.Query(`SELECT * FROM User WHERE username LIKE '%'||?||'%'`, substring)
+	if err != nil {
+		return nil, ErrUserDoesNotExist
+	}
+
+	for rows.Next() {
+		var user User
+
+		err = rows.Scan(&user.Id, &user.Username)
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	_ = rows.Close()
+
+	return users, nil
+
 }
