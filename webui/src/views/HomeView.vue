@@ -217,7 +217,9 @@ export default {
 						<div class="card mb-4 shadow-sm post">
 
 							<div class="d-flex justify-content-between align-items-center">
-								<p class="card-text" style="margin-left: 2px;"> {{ photo.username }}</p>
+								<RouterLink :to="'/user/' + photo.username + '/userprofile'" class="nav-link">
+									<p class="card-text" style="margin-left: 2px;"> {{ photo.username }}</p>
+								</RouterLink>
 							</div>
 							
 							<div class="container-image">

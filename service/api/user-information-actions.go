@@ -1,7 +1,6 @@
 package api
 
 import (
-
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 	"github.com/julienschmidt/httprouter"
@@ -45,10 +44,10 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	if username == user.Username{
+	if username == user.Username {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	}else if err != nil {
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
