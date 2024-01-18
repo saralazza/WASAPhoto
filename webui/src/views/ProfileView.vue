@@ -121,6 +121,7 @@ export default {
 					})
 					this.p = response.data
 					this.successmsg = "Photo uploaded successfully."
+					console.log(this.successmsg)
 				} catch (e) {
 					if (e.response && e.response.status === 400) {
                         this.errormsg = "Form error, please check all fields and try again";
