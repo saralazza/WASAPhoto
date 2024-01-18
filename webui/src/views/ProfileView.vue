@@ -320,6 +320,7 @@ export default {
 				</div>
 
 				<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+				<SuccessMsg v-if="successmsg" :msg="successmsg"></SuccessMsg>
 
 				<div class="row">
 					<div class="col-md-4" v-for="photo in this.photos" :key="photo.id">
