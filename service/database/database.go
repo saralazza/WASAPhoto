@@ -44,12 +44,10 @@ type AppDatabase interface {
 
 	SetFollow(Follow) error
 	RemoveFollow(Follow) error
-	GetFollowings(uint64) ([]string, error)
 
 	SetLike(Like) error
 	RemoveLike(Like) error
 	RemoveLikes(Ban) error
-	GetLikes(uint64) ([]string, error)
 
 	SetPhoto(Photo) (uint64, error)
 	RemovePhoto(Photo) error
@@ -71,7 +69,6 @@ type AppDatabase interface {
 
 	SetBan(Ban) error
 	RemoveBan(Ban) error
-	GetBannings(uint64) ([]string, error)
 
 	Ping() error
 }

@@ -129,27 +129,6 @@ paths:
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
-    
-  /user/{uid}/ban:
-    parameters:
-      - {$ref: "#/components/parameters/uid"}
-    get:
-      security:
-      - bearerAuth: []
-      tags: ["ban"]
-      summary: Obtain ban list
-      description: Obtain the list of banned users
-      operationId: getBanList
-      responses:
-        "200":
-          description: Ban list returned successfully
-          content:
-            apllication/json:
-              schema:
-                {$ref: '#/components/schemas/BanList'}
-        "400": {$ref: '#/components/responses/BadRequest'}
-        "401": {$ref: '#/components/responses/Unauthorized'}
-        "500": {$ref: '#/components/responses/InternalServerError'}
   
   /user/{uid}/follow/{followeduid}:
     parameters:
@@ -183,27 +162,6 @@ paths:
       responses:
         "204":
           description: User unfollowed successfully
-        "400": {$ref: '#/components/responses/BadRequest'}
-        "401": {$ref: '#/components/responses/Unauthorized'}
-        "500": {$ref: '#/components/responses/InternalServerError'}
-  
-  /user/{uid}/follow:
-    parameters:
-      - {$ref: "#/components/parameters/uid"}
-    get:
-      security:
-      - bearerAuth: []
-      tags: ["follow"]
-      summary: Obtain follow list
-      description: Obtain the list of followed users
-      operationId: getFollowList
-      responses:
-        "200":
-          description: Followed list returned successfully
-          content:
-            apllication/json:
-              schema:
-                {$ref: '#/components/schemas/FollowList'}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
@@ -334,29 +292,6 @@ paths:
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
-    
-  /user/{uid}/photo/{photoid}/likes:
-    parameters:
-      - {$ref: "#/components/parameters/uid"}
-      - {$ref: "#/components/parameters/photoid"}
-    get:
-      security:
-      - bearerAuth: []
-      description: Get the list of likes of a photo
-      summary: Get likes
-      tags: ["like"]
-      operationId: getLikes
-      responses:
-        "200":
-          description: Likes returned successfully
-          content:
-            application/json:
-              schema: 
-                {$ref: '#/components/schemas/LikeList'}
-        "400": {$ref: '#/components/responses/BadRequest'}
-        "401": {$ref: '#/components/responses/Unauthorized'}
-        "500": {$ref: '#/components/responses/InternalServerError'}
-      
         
   /user/{uid}/photo/{photoid}/comments/{commentid}:
     parameters:
@@ -686,31 +621,6 @@ components:
           type: integer
           minimum: 0
           example: 50
-    
-    BanList:
-      title: BanList
-      description: Ban list schema  omposed by username of banned users
-      properties:
-        ban:
-          type: array
-          description: The list of banned people
-          items:
-            {$ref: '#/components/schemas/Ban'}
-          minItems: 0
-          maxItems: 1000
-            
-            
-    FollowList:
-      title: FollowList
-      description: Follow list schema composed by username of followed users
-      properties:
-        follow:
-          type: array
-          description: The list of followed people
-          items:
-            {$ref: '#/components/schemas/Follow'}
-          minItems: 0
-          maxItems: 1000
             
     PhotoList:
       title: PhotoList
@@ -721,18 +631,6 @@ components:
           description: The list of photos
           items:
             {$ref: '#/components/schemas/Photo'}
-          minItems: 0
-          maxItems: 1000
-          
-    LikeList:
-      title: LikeList
-      description: Like list schema composed by username of users that like photo
-      properties:
-        likes:
-          description: The list of likes
-          type: array
-          items:
-            {$ref: '#/components/schemas/Like'}
           minItems: 0
           maxItems: 1000
 

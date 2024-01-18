@@ -37,37 +37,3 @@ func (db *appdbimpl) RemoveBan(b Ban) error {
 	return nil
 
 }
-
-func (db *appdbimpl) GetBannings(userid uint64) ([]string, error) {
-	var bannings []string
-
-	rows, err := db.c.Query(`SELECT banneduserid FROM Ban WHERE userid=?`, userid)
-	if err != nil {
-		return nil, err
-	}
-
-	for rows.Next() {
-		var id uint64
-		var banning string
-
-		err = rows.Scan(&id)
-		if err != nil {
-			return nil, err
-		}
-
-		banning, err = db.GetUsernameById(id)
-		if err != nil {
-			return nil, err
-		}
-
-		bannings = append(bannings, banning)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	_ = rows.Close()
-
-	return bannings, nil
-}

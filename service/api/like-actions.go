@@ -105,38 +105,3 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	w.WriteHeader(http.StatusNoContent)
 
 }
-
-// Get the list of likes of a photo
-func (rt *_router) getLikes(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	var likes []string
-	var photoid uint64
-
-	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	photoid, err = strconv.ParseUint(ps.ByName("photoid"), 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
-	if errors.Is(err, database.ErrNotAuthorized) {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
-		return
-	}
-
-	likes, err = rt.db.GetLikes(photoid)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(likes)
-
-}
