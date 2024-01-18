@@ -98,7 +98,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
-		fmt.Printf("user\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -109,7 +108,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
-		fmt.Printf("photo\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -120,7 +118,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
-		fmt.Printf("like\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -131,7 +128,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
-		fmt.Printf("ban\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -142,7 +138,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
-		fmt.Printf("follow\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
@@ -153,7 +148,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 		);`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
-		fmt.Printf("comment\n")
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
