@@ -129,6 +129,24 @@ paths:
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
+
+    get:
+      security:
+      - bearerAuth: []  
+      description: Check if the user bans another user
+      summary: Check banned user
+      tags: ["ban"]
+      operationId: isBan
+      responses:
+        "200":
+          description: a boolean value that indicates if the bannedueserid bans really the userid
+          content:
+            application/json:
+              schema: 
+                {$ref: '#/components/schemas/IsBan'}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "500": {$ref: '#/components/responses/InternalServerError'}
   
   /user/{uid}/follow/{followeduid}:
     parameters:
@@ -162,6 +180,23 @@ paths:
       responses:
         "204":
           description: User unfollowed successfully
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "500": {$ref: '#/components/responses/InternalServerError'}
+    get:
+      security:
+      - bearerAuth: []  
+      description: Check if the user follow another user
+      summary: Check followes user
+      tags: ["follow"]
+      operationId: isFollow
+      responses:
+        "200":
+          description: a boolean value that indicates if the followedueserid follow really the userid
+          content:
+            application/json:
+              schema: 
+                {$ref: '#/components/schemas/IsFollow'}
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
@@ -292,6 +327,25 @@ paths:
         "400": {$ref: '#/components/responses/BadRequest'}
         "401": {$ref: '#/components/responses/Unauthorized'}
         "500": {$ref: '#/components/responses/InternalServerError'}
+    
+    get:
+      security:
+      - bearerAuth: []  
+      description: Check if the user put like to this photo
+      summary: Check liked photo
+      tags: ["like"]
+      operationId: isLike
+      responses:
+        "200":
+          description: a boolean value that indicates if the user likes really the photo
+          content:
+            application/json:
+              schema: 
+                {$ref: '#/components/schemas/IsLike'}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "500": {$ref: '#/components/responses/InternalServerError'}
+
         
   /user/{uid}/photo/{photoid}/comments/{commentid}:
     parameters:
@@ -657,5 +711,23 @@ components:
             {$ref: '#/components/schemas/User'}
           minItems: 0
           maxItems: 1000
+    
+    IsLike:
+      title: IsLike
+      description: Value indicates if an user likes a photo
+      type: boolean
+      example: false
+
+    IsFollow:
+      title: IsFollow
+      description: Value indicates if an user follows another user
+      type: boolean
+      example: false
+
+    IsBan:
+      title: IsBan
+      description: Value indicates if an user bans another user
+      type: boolean
+      example: false
             
       

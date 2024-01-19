@@ -37,3 +37,13 @@ func (db *appdbimpl) RemoveBan(b Ban) error {
 	return nil
 
 }
+
+func (db *appdbimpl) IsBan(b Ban) (bool, error) {
+	var check bool
+
+	err := db.c.QueryRow(`SELECT EXISTS(SELECT * FROM Ban WHERE userid=? and banneduserid=?)`, b.UserId, b.BannedUserId).Scan(&check)
+	if err != nil {
+		return false, err
+	}
+	return check, nil
+}

@@ -36,3 +36,13 @@ func (db *appdbimpl) RemoveFollow(f Follow) error {
 	}
 	return err
 }
+
+func (db *appdbimpl) IsFollow(f Follow) (bool, error) {
+	var check bool
+
+	err := db.c.QueryRow(`SELECT EXISTS(SELECT * FROM Follow WHERE userid=? and followeduserid=?)`, f.UserId, f.FollowedUserId).Scan(&check)
+	if err != nil {
+		return false, err
+	}
+	return check, nil
+}

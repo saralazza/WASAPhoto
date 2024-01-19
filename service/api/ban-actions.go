@@ -101,3 +101,40 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 	w.WriteHeader(http.StatusNoContent)
 
 }
+
+func (rt *_router) isBan(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var ban Ban
+	var banneduid uint64
+
+	uid, err := strconv.ParseUint(ps.ByName("uid"), 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	banneduid, err = strconv.ParseUint(ps.ByName("banneduid"), 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	ban.UserId = uid
+	ban.BannedUserId = banneduid
+
+	err = CheckAuthentication(r.Header.Get("Authorization"), uid)
+	if errors.Is(err, database.ErrNotAuthorized) {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	dbBan := ban.BanFromApiToDatabase()
+	check, err := rt.db.IsBan(dbBan)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(check)
+}

@@ -24,6 +24,7 @@ export default {
 							date: '',
 						}
 					],
+					isLike: false,
 				}
 			],
 			photo: {
@@ -34,6 +35,7 @@ export default {
 					commentCounter: 0,
 					username: '',
 					userId: 0,
+					isLike: false,
 			},
 			new_comment:'',
 		}
@@ -82,6 +84,25 @@ export default {
 									this.errormsg = e.toString();
 								}
 							}
+							try{
+								let responseIsLike = await this.$axios.get('/user/'+this.stream[i].userId+'/photo/'+this.stream[i].photoId+'/likes/'+this.token,
+									{
+										headers: {
+											Authorization: "Bearer " +  this.stream[i].userId}
+									}
+								)
+								this.stream[i].isLike = responseIsLike.data
+							}catch(e){
+								if (e.response && e.response.status === 400) {
+									this.errormsg = "Input error, please check all fields and try again";
+								} else if (e.response && e.response.status === 500) {
+									this.errormsg = "Server error, please try again later";
+								} else if(e.response && e.response.status === 401){
+									this.errormsg = "You are not authorized";
+								}else{
+									this.errormsg = e.toString();
+								}
+							}
 						}
 					}
 				}
@@ -111,6 +132,7 @@ export default {
 						return photo.photoId == photoid
 					})[0];
 					this.photo.likeCounter+=1
+					this.photo.isLike = true
 				}
 			}catch(e){
 				if (e.response && e.response.status === 400) {
@@ -135,6 +157,7 @@ export default {
 						return photo.photoId == photoid
 					})[0];
 					this.photo.likeCounter-=1
+					this.photo.isLike = false
 				}
 			}catch(e){
 				if (e.response && e.response.status === 400) {
@@ -235,12 +258,12 @@ export default {
 							</div>
 
 							<div class="d-flex justify-content-between align-items-center btn-toolbar mb-2 mb-md-0 mt-2 ms-auto">
-								<div class="btn-group me-2">
-									<button type="button" class="btn custom-btn rounded-5" style="width: 60px;" @click="likePhoto(photo.photoId, photo.userId)">Like</button>
+								<div class="btn-group me-2" v-if="photo.isLike">
+									<button type="button" class="btn custom-btn rounded-5" style="width: 80px;" @click="unlikePhoto(photo.photoId, photo.userId)">Dislike</button>
 								</div>
 
-								<div class="btn-group me-2">
-									<button type="button" class="btn custom-btn rounded-5" style="width: 80px;" @click="unlikePhoto(photo.photoId, photo.userId)">Dislike</button>
+								<div class="btn-group me-2" v-else>
+									<button type="button" class="btn custom-btn rounded-5" style="width: 60px;" @click="likePhoto(photo.photoId, photo.userId)">Like</button>
 								</div>
 
 							</div>

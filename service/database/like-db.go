@@ -44,3 +44,13 @@ func (db *appdbimpl) RemoveLikes(b Ban) error {
 	}
 	return nil
 }
+
+func (db *appdbimpl) IsLike(l Like) (bool, error) {
+	var check bool
+
+	err := db.c.QueryRow(`SELECT EXISTS(SELECT * FROM Like WHERE photoid=? and userid=?)`, l.PhotoId, l.UserId).Scan(&check)
+	if err != nil {
+		return false, err
+	}
+	return check, nil
+}

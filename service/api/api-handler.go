@@ -13,10 +13,12 @@ func (rt *_router) Handler() http.Handler {
 	// Ban actions
 	rt.router.PUT("/user/:uid/ban/:banneduid", rt.wrap(rt.banUser))      // DONE
 	rt.router.DELETE("/user/:uid/ban/:banneduid", rt.wrap(rt.unbanUser)) // DONE
+	rt.router.GET("/user/:uid/ban/:banneduid", rt.wrap(rt.isBan))        // DONE
 
 	// Follow actions
 	rt.router.PUT("/user/:uid/follow/:followeduid", rt.wrap(rt.followUser))      // DONE
 	rt.router.DELETE("/user/:uid/follow/:followeduid", rt.wrap(rt.unfollowUser)) // DONE
+	rt.router.GET("/user/:uid/follow/:followeduid", rt.wrap(rt.isFollow))        // DONE
 
 	// User Information actions
 	rt.router.PUT("/user/:uid/myusername", rt.wrap(rt.setMyUserName)) // DONE
@@ -32,6 +34,7 @@ func (rt *_router) Handler() http.Handler {
 	// Like actions
 	rt.router.PUT("/user/:uid/photo/:photoid/likes/:likeuid", rt.wrap(rt.likePhoto))      // DONE
 	rt.router.DELETE("/user/:uid/photo/:photoid/likes/:likeuid", rt.wrap(rt.unlikePhoto)) // DONE
+	rt.router.GET("/user/:uid/photo/:photoid/likes/:likeuid", rt.wrap(rt.isLike))         // DONE
 
 	// Comment actions
 	rt.router.DELETE("/user/:uid/photo/:photoid/comments/:commentid", rt.wrap(rt.uncommentPhoto)) // DONE

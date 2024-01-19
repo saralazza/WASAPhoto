@@ -32,6 +32,7 @@ export default {
 							date: '',
 						}
 					],
+					isLike: false,
 				}
 			],
 			photo: {
@@ -42,8 +43,11 @@ export default {
 					commentCounter: 0,
 					username: '',
 					userId: 0,
+					isLike: false,
 			},
 			new_comment:'',
+			isFollow: false,
+			isBan: false,
 		}
 	},
 	methods: {
@@ -93,6 +97,25 @@ export default {
 									this.errormsg = e.toString();
 								}
 							}
+							try{
+								let responseIsLike = await this.$axios.get('/user/'+this.photos[i].userId+'/photo/'+this.photos[i].photoId+'/likes/'+this.token,
+									{
+										headers: {
+											Authorization: "Bearer " +  this.photos[i].userId}
+									}
+								)
+								this.photos[i].isLike = responseIsLike.data
+							}catch(e){
+								if (e.response && e.response.status === 400) {
+									this.errormsg = "Input error, please check all fields and try again";
+								} else if (e.response && e.response.status === 500) {
+									this.errormsg = "Server error, please try again later";
+								} else if(e.response && e.response.status === 401){
+									this.errormsg = "You are not authorized";
+								}else{
+									this.errormsg = e.toString();
+								}
+							}
 						}
 					}
 				}
@@ -122,6 +145,7 @@ export default {
 						return photo.photoId == photoid
 					})[0];
 					this.photo.likeCounter+=1
+					this.photo.isLike = true
 				}
 			}catch(e){
 				if (e.response && e.response.status === 400) {
@@ -146,6 +170,7 @@ export default {
 						return photo.photoId == photoid
 					})[0];
 					this.photo.likeCounter-=1
+					this.photo.isLike = false
 				}
 			}catch(e){
 				if (e.response && e.response.status === 400) {
@@ -166,6 +191,40 @@ export default {
 					}
 				)
 				this.profile = response.data
+				try{
+					let responseFollow = await this.$axios.get('/user/'+this.token+'/follow/'+this.$route.params.uid,
+						{
+							headers: {
+								Authorization: "Bearer " + this.token }
+						}
+					)
+					this.isFollow = responseFollow.data
+				}catch(e){
+					if (e.response && e.response.status === 400) {
+						this.errormsg = "Form error, please check all fields and try again";
+					}else if(e.response && e.response.status === 500){
+						this.errormsg = "Server error, please try again later";
+					}else{
+						this.errormsg = e.toString();
+					}
+				}
+				try{
+					let responseBan = await this.$axios.get('/user/'+this.token+'/ban/'+this.$route.params.uid,
+						{
+							headers: {
+								Authorization: "Bearer " + this.token }
+						}
+					)
+					this.isBan = responseBan.data
+				}catch(e){
+					if (e.response && e.response.status === 400) {
+						this.errormsg = "Form error, please check all fields and try again";
+					}else if(e.response && e.response.status === 500){
+						this.errormsg = "Server error, please try again later";
+					}else{
+						this.errormsg = e.toString();
+					}
+				}
 			}catch(e){
 				if (e.response && e.response.status === 400) {
 					this.errormsg = "Form error, please check all fields and try again";
@@ -217,6 +276,7 @@ export default {
 							Authorization: "Bearer " + this.token
 						}
 					})
+				this.isFollow = true
             }catch(e){
                 if (e.response && e.response.status === 400) {
 					this.errormsg = "Form error, please check all fields and try again";
@@ -234,6 +294,7 @@ export default {
 							Authorization: "Bearer " + this.token
 						}
 					})
+				this.isFollow = false
             }catch(e){
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Form error, please check all fields and try again";
@@ -251,6 +312,7 @@ export default {
 							Authorization: "Bearer " + this.token
 						}
 					})
+				this.isBan = true
             }catch(e){
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Form error, please check all fields and try again";
@@ -268,6 +330,7 @@ export default {
 							Authorization: "Bearer " + this.token
 						}
 					})
+				this.isBan = false
             }catch(e){
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Form error, please check all fields and try again";
@@ -336,21 +399,21 @@ export default {
 						<p style="font-size: 18px">Followings</p>
 					</div>
 
-                    <div class="d-flex flex-column justify-content-center align-items-center">
+                    <div class="d-flex justify-content-center align-items-center">
                         <div class="justify-content-center align-items-center">
-                            <div class="btn-group me-2">
-									<button type="button" class="btn custom-btn rounded-5" style="width: 90px;" @click="follow()">Follow</button>
-							</div>
-                            <div class="btn-group me-2">
+							<div class="btn-group me-2" v-if="isFollow">
 									<button type="button" class="btn custom-btn rounded-5" style="width: 90px;" @click="unfollow()">Unfollow</button>
 							</div>
-                        </div>
-                        <div class="justify-content-center align-items-center pt-2">
-                            <div class="btn-group me-2">
-									<button type="button" class="btn custom-btn rounded-5" style="width: 90px;" @click="ban()">Ban</button>
+                            <div class="btn-group me-2" v-else>
+									<button type="button" class="btn custom-btn rounded-5" style="width: 90px;" @click="follow()">Follow</button>
 							</div>
-                            <div class="btn-group me-2">
+                        </div>
+                        <div class="justify-content-center align-items-center">
+							<div class="btn-group me-2" v-if="isBan">
 									<button type="button" class="btn custom-btn rounded-5" style="width: 90px;" @click="unban()">Unban</button>
+							</div>
+                            <div class="btn-group me-2" v-else>
+									<button type="button" class="btn custom-btn rounded-5" style="width: 90px;" @click="ban()">Ban</button>
 							</div>
                         </div>
                     </div>
@@ -373,12 +436,12 @@ export default {
 
 							<div class="d-flex justify-content-between align-items-center btn-toolbar mb-2 mb-md-0 mt-2 ms-auto">
 
-								<div class="btn-group me-2">
-									<button type="button" class="btn custom-btn rounded-5" style="width: 60px;" @click="likePhoto(photo.photoId, photo.userId)">Like</button>
+								<div class="btn-group me-2" v-if="photo.isLike">
+									<button type="button" class="btn custom-btn rounded-5" style="width: 80px;" @click="unlikePhoto(photo.photoId, photo.userId)">Dislike</button>
 								</div>
 
-								<div class="btn-group me-2">
-									<button type="button" class="btn custom-btn rounded-5" style="width: 80px;" @click="unlikePhoto(photo.photoId, photo.userId)">Dislike</button>
+								<div class="btn-group me-2" v-else>
+									<button type="button" class="btn custom-btn rounded-5" style="width: 60px;" @click="likePhoto(photo.photoId, photo.userId)">Like</button>
 								</div>
 
 							</div>
