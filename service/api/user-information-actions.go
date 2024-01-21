@@ -1,6 +1,8 @@
 package api
 
 import (
+	"regexp"
+
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 	"github.com/julienschmidt/httprouter"
@@ -141,7 +143,12 @@ func (rt *_router) getUserBySubstring(w http.ResponseWriter, r *http.Request, ps
 
 	substring := r.URL.Query().Get("substring")
 
-	users, err := rt.db.SearchUsers(substring)
+	auth := r.Header.Get("Authorization")
+	re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`)
+	stringToken := re.FindAllString(auth, -1)
+	userid, _ := strconv.ParseUint(stringToken[0], 10, 64)
+
+	users, err := rt.db.SearchUsers(substring, userid)
 	if errors.Is(err, database.ErrUserDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

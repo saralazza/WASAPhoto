@@ -32,7 +32,11 @@ export default {
 				this.errormsg = "Empty username is invalid"
 			}else{
 				try{
-					let response = await this.$axios.get('/user?substring='+this.substring)
+					let response = await this.$axios.get('/user?substring='+this.substring,{
+						headers: {
+							Authorization: "Bearer " + this.token
+						}
+					})
 					this.users = response.data
 				}catch(e){
 					if (e.response && e.response.status === 400) {

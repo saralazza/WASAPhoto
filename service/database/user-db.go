@@ -121,12 +121,12 @@ func (db *appdbimpl) GetProfile(userid uint64) (uint64, uint64, uint64, error) {
 	return photoCounter, followerCounter, followingCounter, nil
 }
 
-func (db *appdbimpl) SearchUsers(substring string) ([]User, error) {
+func (db *appdbimpl) SearchUsers(substring string, uid uint64) ([]User, error) {
 	var users []User
 
-	rows, err := db.c.Query(`SELECT * FROM User WHERE username LIKE '%'||?||'%'`, substring)
+	rows, err := db.c.Query(`SELECT * FROM User WHERE id IN( SELECT id FROM User WHERE username LIKE '%'||?||'%' EXCEPT SELECT userid FROM Ban WHERE banneduserid=? EXCEPT SELECT ?)`, substring, uid, uid)
 	if err != nil {
-		return nil, ErrUserDoesNotExist
+		return nil, err
 	}
 
 	for rows.Next() {
