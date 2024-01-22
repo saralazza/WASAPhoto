@@ -639,6 +639,8 @@ components:
           {$ref: '#/components/schemas/User/properties/id'}
         photoid:
           {$ref: '#/components/schemas/Photo/properties/id'}
+        username: 
+          {$ref: '#/components/schemas/User/properties/username'}
           
     Stream:
       title: Stream

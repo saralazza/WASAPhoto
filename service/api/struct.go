@@ -138,20 +138,22 @@ func (p *Photo) PhotoFromApiToDatabase() database.Photo {
 }
 
 type Comment struct {
-	Text    string `json:"text"`
-	Id      uint64 `json:"id"`
-	UserId  uint64 `json:"userId"`
-	PhotoId uint64 `json:"photoId"`
-	Date    string `json:"date"`
+	Text     string `json:"text"`
+	Id       uint64 `json:"id"`
+	UserId   uint64 `json:"userId"`
+	PhotoId  uint64 `json:"photoId"`
+	Date     string `json:"date"`
+	Username string `json:"username"`
 }
 
 func CommentFromDatabaseToApi(comment database.Comment) Comment {
 	c := Comment{
-		Text:    comment.Text,
-		Id:      comment.Id,
-		UserId:  comment.UserId,
-		PhotoId: comment.PhotoId,
-		Date:    comment.Date,
+		Text:     comment.Text,
+		Id:       comment.Id,
+		UserId:   comment.UserId,
+		PhotoId:  comment.PhotoId,
+		Date:     comment.Date,
+		Username: comment.Username,
 	}
 
 	return c
@@ -159,11 +161,12 @@ func CommentFromDatabaseToApi(comment database.Comment) Comment {
 
 func (c *Comment) CommentFromApiToDatabase() database.Comment {
 	comment := database.Comment{
-		Text:    c.Text,
-		Id:      c.Id,
-		UserId:  c.UserId,
-		PhotoId: c.PhotoId,
-		Date:    c.Date,
+		Text:     c.Text,
+		Id:       c.Id,
+		UserId:   c.UserId,
+		PhotoId:  c.PhotoId,
+		Date:     c.Date,
+		Username: c.Username,
 	}
 
 	return comment

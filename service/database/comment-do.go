@@ -81,6 +81,11 @@ func (db *appdbimpl) GetComments(photoid uint64) ([]Comment, error) {
 			return nil, err
 		}
 
+		db.c.QueryRow(`SELECT username FROM User WHERE id=?`, comment.UserId).Scan(&comment.Username)
+		if err != nil {
+			return nil, err
+		}
+
 		comments = append(comments, comment)
 	}
 

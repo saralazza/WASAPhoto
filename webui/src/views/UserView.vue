@@ -27,9 +27,10 @@ export default {
 						{
 							text: '',
 							id: 0,
-							iserId: 0,
+							userId: 0,
 							photoId: 0,
 							date: '',
+							username: '',
 						}
 					],
 					isLike: false,
@@ -44,8 +45,8 @@ export default {
 					username: '',
 					userId: 0,
 					isLike: false,
+					new_comment:'',
 			},
-			new_comment:'',
 			isFollow: false,
 			isBan: false,
 		}
@@ -235,9 +236,9 @@ export default {
 				}
 			}
 		},
-		async sendComment(photoid, userid){
+		async sendComment(photoid, userid, new_comment){
 			try{
-				let response = await this.$axios.post('/user/'+userid+'/photo/'+photoid+'/comments' , {text: this.new_comment, userId: parseInt(this.token)}, {
+				let response = await this.$axios.post('/user/'+userid+'/photo/'+photoid+'/comments' , {text: new_comment, userId: parseInt(this.token)}, {
 						headers: {
 							Authorization: "Bearer " + this.token
 						}
@@ -447,8 +448,8 @@ export default {
 							</div>
 
 							<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1">
-								<input type="text" id="new_comment" v-model="new_comment" class="form-control-login" style="width: 220px; margin-left: 5px;" placeholder=" Insert here a comment">
-								<button class="btn custom-btn rounded-5 btn-success" type="button" style="margin-right: 5px;" @click="sendComment(photo.photoId, photo.userId)">Send</button>
+								<input type="text" id="new_comment" v-model="photo.new_comment" class="form-control-login" style="width: 220px; margin-left: 5px;" placeholder=" Insert here a comment">
+								<button class="btn custom-btn rounded-5 btn-success" type="button" style="margin-right: 5px;" @click="sendComment(photo.photoId, photo.userId, photo.new_comment)">Send</button>
 							</div>
 
 							<div class="card-body">
@@ -466,7 +467,10 @@ export default {
 									<div v-for="comment in photo.comments" :key="comment.id">
 
 										<div class="d-flex justify-content-between align-items-center" style='border-top: 1px solid #ccc;'>
-											<p class="card-text" style="margin-left: 2px;">{{ comment.text }}</p>
+											<RouterLink :to="'/user/' + comment.userId + '/userprofile'" class="nav-link">
+												<p style="margin-left: 2px; margin-top: 15px;">{{ comment.username }}</p>
+											</RouterLink>
+											<p style="margin-top: 15px;">{{ comment.text }}</p>
 											<button type="button" class="btn custom-btn rounded-5" style="width: 65px; height: 27px; font-size: 13px;" @click="deleteComment(photo.photoId, photo.userId, comment.id)">Delete</button>
 										</div>
 					
